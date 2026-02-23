@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}{{ t('requestAccess.pageTitle') }} - Contra{% endblock %}
+{% block content %}
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <h3 class="mb-4">{{ t('requestAccess.heading') }}</h3>
+          <form method="POST">
+            <div class="mb-3">
+              <label class="form-label" for="name">{{ t('requestAccess.name') }}</label>
+              <input class="form-control" id="name" name="name" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="username">{{ t('requestAccess.username') }}</label>
+              <input class="form-control" id="username" name="username" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="company">{{ t('requestAccess.company') }}</label>
+              <input class="form-control" id="company" name="company" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="email">{{ t('requestAccess.email') }}</label>
+              <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="message">{{ t('requestAccess.message') }}</label>
+              <textarea class="form-control" id="message" name="message"></textarea>
+            </div>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary">{{ t('requestAccess.submit') }}</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

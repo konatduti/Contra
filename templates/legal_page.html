@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }} - Contra{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h1 class="mb-4">{{ page_title }}</h1>
+                    <div class="formatted-text" id="legalContent">{{ content }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const container = document.getElementById('legalContent');
+        if (container) {
+            container.innerHTML = marked.parse(container.textContent);
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,340 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t('analysis.pageTitle') }} - Contra{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="d-flex align-items-center gap-3">
+                    <span>
+                        <i class="fas fa-file-contract text-primary me-2"></i>
+                        {{ t('analysis.heading') }}
+                    </span>
+                    <span class="badge {% if document.is_private %}bg-secondary{% else %}bg-success{% endif %} fs-6" data-status="{{ 'private' if document.is_private else 'shared' }}">
+                        {% if document.is_private %}
+                        <i class="fas fa-user-lock me-1"></i>{{ t('analysis.visibility.private') }}
+                        {% else %}
+                        <i class="fas fa-share-alt me-1"></i>{{ t('analysis.visibility.shared') }}
+                        {% endif %}
+                    </span>
+                </h1>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>{{ t('analysis.actions.back') }}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Document Info -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h5 class="card-title mb-1">{{ document.original_filename }}</h5>
+                            <p class="text-muted mb-0">
+                                <i class="fas fa-calendar me-2"></i>{{ t('analysis.document.uploaded') }} {{ document.upload_date|format_budapest_time('%Y-%m-%d %H:%M') if document.upload_date else t('common.notAvailable') }}
+                                <span class="mx-2">|</span>
+                                <i class="fas fa-file me-2"></i>{{ t('analysis.document.type') }} {{ (document.file_type or 'N/A')|upper }}
+                                <span class="mx-2">|</span>
+                                <i class="fas fa-stopwatch me-2"></i>{{ t('analysis.document.duration', seconds="%.2f"|format(analysis.processing_time or 0)) }}
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <div class="d-flex flex-column align-items-md-end gap-2">
+                                <span class="badge bg-success fs-6" data-status="completed">
+                                    <i class="fas fa-check me-1"></i>{{ t('analysis.status.complete') }}
+                                </span>
+                                {% if analysis_detected_language %}
+                                <small class="text-muted">
+                                    <i class="fas fa-language me-1"></i>{{ t('analysis.document.language') }} {{ analysis_detected_language }}
+                                </small>
+                                {% endif %}
+                                {% if analysis_contract_type or analysis_view.contract_type %}
+                                <small class="text-muted">
+                                    <i class="fas fa-scale-balanced me-1"></i>{{ t('analysis.document.contractType') }} {{ analysis_contract_type or analysis_view.contract_type or t('common.notAvailable') }}
+                                </small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if analysis.status == 'completed' %}
+    {% if document.is_private %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert alert-secondary border shadow-sm d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+                <div>
+                    <h5 class="alert-heading mb-1"><i class="fas fa-user-shield me-2"></i>{{ t('analysis.training.heading') }}</h5>
+                    <p class="mb-0">{{ t('analysis.training.description') }}</p>
+                    <small class="text-muted">{{ t('analysis.training.note') }}</small>
+                </div>
+                <form method="POST" action="{{ url_for('allow_training', document_id=document.id) }}">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-heart me-2"></i>{{ t('analysis.training.allowButton') }}
+                    </button>
+                    <div class="form-text text-center">{{ t('analysis.training.reward') }}</div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-file-alt text-info me-2"></i>{{ t('analysis.sections.title') }}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <section class="mb-4">
+                        {% if summary_length_options and summary_length_options|length > 1 %}
+                        <div class="d-flex justify-content-end align-items-center gap-2 mb-3 summary-toggle-wrapper">
+                            <div class="btn-group summary-length-toggle" role="group" aria-label="{{ t('analysis.summaryModes.label') }}">
+                                {% for length in summary_length_options %}
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-primary {% if summary_length_default == length %}active{% endif %}"
+                                    data-summary-length="{{ length }}"
+                                    aria-pressed="{{ 'true' if summary_length_default == length else 'false' }}"
+                                >{{ t('analysis.summaryModes.' ~ length) }}</button>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        <div
+                            class="formatted-text"
+                            id="analysisSummary"
+                            data-summaries="{{ summary_variants | tojson | forceescape }}"
+                            data-current-language="{{ current_language }}"
+                            data-fallback-language="en"
+                            data-empty-message="{{ t('analysis.sections.empty') }}"
+                            data-default-summary="{{ (analysis_view.summary or '') | tojson | forceescape }}"
+                            data-default-length="{{ summary_length_default }}"
+                        >{{ analysis_view.summary or t('analysis.sections.empty') }}</div>
+                    </section>
+                    {% if analysis_view.legal_references %}
+                    <section class="mb-4">
+                        <h6 class="text-uppercase text-muted">{{ t('analysis.sections.legalReferences') }}</h6>
+                        <div class="formatted-text" id="analysisLegalReferences">{{ analysis_view.legal_references }}</div>
+                    </section>
+                    {% endif %}
+                    {% if analysis_view.legal_reference_issues %}
+                    <section>
+                        <h6 class="text-uppercase text-muted">{{ t('analysis.sections.referenceIssues') }}</h6>
+                        <div class="formatted-text" id="analysisLegalIssues">{{ analysis_view.legal_reference_issues }}</div>
+                    </section>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+                    <div>
+                        <h5 class="card-title mb-0"><i class="fas fa-comment-dots text-primary me-2"></i>{{ t('analysis.feedback.heading') }}</h5>
+                        <small class="text-muted">{{ t('analysis.feedback.prompt') }}</small>
+                    </div>
+                    <small class="text-success">{{ t('analysis.feedback.trainingNotice') }}</small>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('submit_feedback', document_id=document.id) }}" class="mb-4">
+                        <div class="mb-3">
+                            <label for="feedback" class="form-label">{{ t('analysis.feedback.label') }}</label>
+                            <textarea class="form-control" id="feedback" name="feedback" rows="4" placeholder="{{ t('analysis.feedback.placeholder') }}" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">{{ t('analysis.feedback.ratingLabel') }}</label>
+                            <div class="d-flex gap-2">
+                                {% for value in range(1,6) %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="rating" id="rating{{ value }}" value="{{ value }}">
+                                    <label class="form-check-label" for="rating{{ value }}">{{ value }}</label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-outline-primary">
+                            <i class="fas fa-paper-plane me-2"></i>{{ t('analysis.feedback.submit') }}
+                        </button>
+                    </form>
+                    {% if feedback_entries %}
+                    <h6 class="text-uppercase text-muted">{{ t('analysis.feedback.previous') }}</h6>
+                    <div class="list-group">
+                        {% for feedback in feedback_entries %}
+                        <div class="list-group-item list-group-item-action">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <strong>{% if feedback.user_id == current_user.id %}{{ t('analysis.feedback.you') }}{% else %}{{ feedback.user.username }}{% endif %}</strong>
+                                <small class="text-muted">{{ feedback.created_at|format_budapest_time('%Y-%m-%d %H:%M') if feedback.created_at else t('common.notAvailable') }}</small>
+                            </div>
+                            <p class="mb-2">{{ feedback.comment }}</p>
+                            {% if feedback.rating %}
+                            <small class="text-muted">{{ t('analysis.feedback.ratingValue', value=feedback.rating) }}</small>
+                            {% endif %}
+                            {% if feedback.credit_awarded %}
+                            <span class="badge bg-success mt-2"><i class="fas fa-coins me-1"></i>{{ t('analysis.feedback.creditAwarded') }}</span>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted mb-0">{{ t('analysis.feedback.empty') }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% elif analysis.status == 'failed' %}
+    <!-- Error Message -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-exclamation-triangle me-2"></i>{{ t('analysis.status.failed') }}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-danger">{{ analysis.error_message or t('analysis.failure.unknown') }}</p>
+                    <a href="{{ url_for('upload') }}" class="btn btn-primary">
+                        <i class="fas fa-upload me-2"></i>{{ t('analysis.failure.retry') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    <!-- Pending Analysis -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-warning" data-status="pending">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-clock me-2"></i>{{ t('analysis.status.pending') }}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p>{{ t('analysis.pending.message') }}</p>
+                    <button class="btn btn-warning" onclick="location.reload()">
+                        <i class="fas fa-sync me-2"></i>{{ t('analysis.pending.refresh') }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const summaryContainer = document.getElementById('analysisSummary');
+    const summaryToggleButtons = summaryContainer
+        ? document.querySelectorAll('.summary-length-toggle button')
+        : [];
+    let summaryData = {};
+    if (summaryContainer && summaryContainer.dataset.summaries) {
+        try {
+            summaryData = JSON.parse(summaryContainer.dataset.summaries);
+        } catch (error) {
+            console.warn('Failed to parse summary variants', error);
+            summaryData = {};
+        }
+    }
+    const fallbackLanguage = summaryContainer ? summaryContainer.dataset.fallbackLanguage || 'en' : 'en';
+    const emptyMessage = summaryContainer ? summaryContainer.dataset.emptyMessage || '' : '';
+    let defaultSummary = '';
+    if (summaryContainer && summaryContainer.dataset.defaultSummary) {
+        try {
+            defaultSummary = JSON.parse(summaryContainer.dataset.defaultSummary);
+        } catch (error) {
+            defaultSummary = summaryContainer.dataset.defaultSummary;
+        }
+    }
+    if (!defaultSummary && summaryContainer) {
+        defaultSummary = summaryContainer.textContent.trim();
+    }
+    const defaultLength = summaryContainer ? summaryContainer.dataset.defaultLength || 'normal' : 'normal';
+
+    function renderMarkdown(el, text, emptyFallback = '') {
+        if (!el) {
+            return;
+        }
+        const source = text && text.trim() ? text : emptyFallback;
+        el.dataset.rawContent = source || '';
+        el.innerHTML = source ? marked.parse(source) : '';
+    }
+
+    function updateSummary(lengthKey) {
+        if (!summaryContainer) {
+            return;
+        }
+        const currentLanguage = summaryContainer.dataset.currentLanguage || fallbackLanguage;
+        const langData = summaryData[currentLanguage] || summaryData[fallbackLanguage] || {};
+        const summaryText = langData[lengthKey] || '';
+        const fallbackText = defaultSummary || emptyMessage;
+        renderMarkdown(summaryContainer, summaryText, fallbackText);
+    }
+
+    const markdownBlocks = [
+        'analysisRecommendations',
+        'analysisLegalReferences',
+        'analysisLegalIssues'
+    ];
+
+    markdownBlocks.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            renderMarkdown(el, el.textContent, '');
+        }
+    });
+
+    if (summaryContainer) {
+        if (!summaryToggleButtons.length) {
+            renderMarkdown(summaryContainer, defaultSummary, emptyMessage);
+        } else {
+            let defaultButton = Array.from(summaryToggleButtons).find(
+                (btn) => (btn.dataset.summaryLength || '') === defaultLength
+            );
+            if (!defaultButton) {
+                defaultButton = summaryToggleButtons[0];
+            }
+            if (defaultButton) {
+                summaryToggleButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                    btn.setAttribute('aria-pressed', 'false');
+                });
+                defaultButton.classList.add('active');
+                defaultButton.setAttribute('aria-pressed', 'true');
+                updateSummary(defaultButton.dataset.summaryLength || 'normal');
+            } else {
+                renderMarkdown(summaryContainer, defaultSummary, emptyMessage);
+            }
+
+            summaryToggleButtons.forEach(button => {
+                button.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    summaryToggleButtons.forEach(btn => {
+                        btn.classList.remove('active');
+                        btn.setAttribute('aria-pressed', 'false');
+                    });
+                    button.classList.add('active');
+                    button.setAttribute('aria-pressed', 'true');
+                    updateSummary(button.dataset.summaryLength || 'normal');
+                });
+            });
+        }
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t('processing.pageTitle') }} - Contra{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center py-5">
+                    <div class="mb-4">
+                        <i class="fas fa-cog fa-spin fa-3x text-primary"></i>
+                    </div>
+                    
+                    <h2 class="mb-3">{{ t('processing.heading') }}</h2>
+                    <p class="text-muted mb-4">
+                        {{ t('processing.description') }}
+                    </p>
+                    
+                    <!-- Progress Bar -->
+                    <div class="progress mb-4" style="height: 20px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated"
+                             role="progressbar"
+                             style="width: 0%"
+                             id="progressBar">
+                            <span id="progressText">0%</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Status Text -->
+                    <div class="mb-4">
+                        <p id="statusText" class="text-muted">
+                            <i class="fas fa-upload me-2"></i>{{ t('processing.status.starting') }}
+                        </p>
+                    </div>
+
+                    <!-- Document Info -->
+                    <div class="row text-start">
+                        <div class="col-md-6">
+                            <small class="text-muted">
+                                <i class="fas fa-file me-2"></i>
+                                <strong>{{ t('processing.labels.document') }}</strong> {{ document.original_filename }}
+                            </small>
+                        </div>
+                        <div class="col-md-6">
+                            <small class="text-muted">
+                                <i class="fas fa-clock me-2"></i>
+                                <strong>{{ t('processing.labels.started') }}</strong> {{ document.upload_date|format_budapest_time('%H:%M:%S') if document.upload_date else t('common.notAvailable') }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tips Card -->
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-lightbulb text-warning me-2"></i>
+                        {{ t('processing.steps.title') }}
+                    </h5>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="fas fa-search text-info me-2"></i>
+                            <strong>{{ t('processing.steps.extract.title') }}</strong> {{ t('processing.steps.extract.description') }}
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-brain text-success me-2"></i>
+                            <strong>{{ t('processing.steps.analysis.title') }}</strong> {{ t('processing.steps.analysis.description') }}
+                        </li>
+                        <li class="mb-0">
+                            <i class="fas fa-check text-primary me-2"></i>
+                            <strong>{{ t('processing.steps.results.title') }}</strong> {{ t('processing.steps.results.description') }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    const statusText = document.getElementById('statusText');
+    const documentId = {{ document.id }};
+
+    const messages = {{ {
+        'starting': t('processing.status.starting'),
+        'ocr': t('processing.status.ocr'),
+        'analysis': t('processing.status.analysis'),
+        'completed': t('processing.status.completed'),
+        'failed': t('processing.status.failed')
+    }|tojson }};
+
+    function updateDisplay(status) {
+        let progress = 0;
+        let message = messages.starting;
+        switch(status) {
+            case 'ocr':
+                progress = 40;
+                message = messages.ocr;
+                break;
+            case 'analysis':
+                progress = 80;
+                message = messages.analysis;
+                break;
+            case 'completed':
+                progress = 100;
+                message = messages.completed;
+                break;
+            case 'failed':
+                progress = 100;
+                message = messages.failed;
+                progressBar.classList.add('bg-danger');
+                progressBar.classList.remove('progress-bar-animated');
+                break;
+            default:
+                progress = 20;
+                message = messages.starting;
+        }
+        progressBar.style.width = progress + '%';
+        progressText.textContent = progress + '%';
+        statusText.textContent = message;
+
+        if (status === 'completed') {
+            setTimeout(() => {
+                window.location.href = `/analysis/${documentId}`;
+            }, 1000);
+        } else if (status === 'failed') {
+            setTimeout(() => {
+                window.location.href = '/upload';
+            }, 3000);
+        }
+    }
+
+    function checkStatus() {
+        fetch(`/check_analysis/${documentId}`)
+            .then(response => response.json())
+            .then(data => {
+                updateDisplay(data.status);
+            })
+            .catch(error => {
+                console.error('Error checking status:', error);
+            });
+    }
+
+    setInterval(checkStatus, 1000);
+    checkStatus();
+});
+</script>
+{% endblock %}
