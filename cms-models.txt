@@ -1,0 +1,85 @@
+Contra M Series
+
+Models
+M1 - Preprocessing and Identification
+M10 - Document language identification
+M11 - Recognizes the contract type
+M12 - Document extraction and division into lines
+M13 - Extracts all legal references
+
+
+M2 - Analysis and Evaluation
+M21 - Analization model, formatting
+M22 - Analization model, general eval
+M23 - Analization model, general eval
+M24 - Analization model, general eval
+M25 - Analization model, small things
+M26 - Checks the legal references one by one
+M27 - If a legal reference has problems, it suggests a better one
+M28 - Summarizes the analization models
+
+M3 - User Output
+M30 - Does the full user output
+
+M4 - Post-Output Checks
+M40 - does a check on M3's output, currently off
+
+M5 - Output Translation
+M50 - Translates M3's output, using M10's output
+
+The output of M50 will be delivered to the user.
+
+
+Input & Output Control
+
+M1 - Preprocessing and Identification
+M10 - Document language identification
+- m10 prompt + guide + document (first 15 and last 15 words)
+M11 - Recognizes the contract type
+- m11 prompt + guide + document
+M12 - Document extraction and division into lines
+- m12 prompt + guide + document
+M13 - Extracts all legal references
+- m13 prompt + guide + document
+
+M2 - Analysis and Evaluation
+M21 - Analization model, formatting
+- m21 prompt + guide + document
+M22 - Analization model, general eval
+- m22 prompt + guide + document
+M23 - Analization model, general eval
+- m23 prompt + guide + document
+M24 - Analization model, general eval
+- m24 prompt + guide + document
+M25 - Analization model, small things
+- m25 prompt + guide + document
+M26 - Checks the legal references one by one
+- m26 prompt + guide + document + one legal reference
+M27 - If a legal reference has problems, it suggests a better one
+- m27 prompt + guide + document + one legal reference + m26 output for that legal reference
+M28 - Summarizes the analization models
+- m28 prompt + m21, m22, m23, m24, m25 output + m26, m27 outputs for each legal reference not marked by 0
+
+M3 - User Output
+M30 - Does the full user output
+- m30 prompt + guide + m28 output
+
+M4 - Post-Output Checks
+M40 - does a check on M30's output, currently off
+- m40 prompt + guide + m30 output + document
+
+M5 - Output Translation
+M50 - Translates M3's output, using M10's output language
+- m10 output + m30 output
+
+
+Version History
+Contra MV0.03
+Bug fixes, added new models: M13, M26, M27 for legal reference validations and suggestions. It now only prints out the correct variables for the user deployment. 
+
+Contra MV0.04
+New prompts still made by chatgpt, but now an enhanced version (done with gpt-4.1). temporarly disabled the usage of guides, to save tokens and as they await rewriting
+ Due to tokenlimit getting hit for some reason, m26 and m27 now don’t execute paralell, rather they run linear (temporarly)
+
+
+

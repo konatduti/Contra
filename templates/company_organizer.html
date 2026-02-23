@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% block title %}{{ t('company.pageTitle', name=company.name) }}{% endblock %}
+{% block content %}
+
+<div class="container py-4">
+
+  <!-- Header -->
+  <div class="mb-4">
+    <h2 class="fw-bold">{{ t('company.heading', name=company.name) }}</h2>
+    <p class="text-muted mb-0">
+      {{ t('company.description', default="Manage company members, credits, and seat limits.") }}
+    </p>
+    <small class="text-secondary">
+      {{ t('company.seats', used=company.users|length, total=company.seat_limit) }} |
+      {{ t('company.credits', monthly=(company.monthly_quota or 0) - (company.monthly_used or 0), oneoff=company.extra_credits or 0) }}
+    </small>
+  </div>
+
+  <!-- Company Settings Card -->
+  {% if current_user.is_admin %}
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h5 class="card-title">{{ t('company.settings.title') }}</h5>
+      <form method="post" action="{{ url_for('update_company', company_id=company.id) }}" class="row g-3 align-items-end">
+        <div class="col-md-4">
+          <label class="form-label">{{ t('company.settings.seatLimit') }}</label>
+          <input class="form-control" type="number" name="seat_limit" value="{{ company.seat_limit }}">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">{{ t('company.settings.monthlyQuota') }}</label>
+          <input class="form-control" type="number" name="monthly_quota" value="{{ company.monthly_quota or 0 }}">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">{{ t('company.settings.oneOffCredits') }}</label>
+          <div class="input-group">
+            <input class="form-control" type="number" name="extra_credits" value="{{ company.extra_credits or 0 }}">
+            <button class="btn btn-warning fw-semibold" type="submit">{{ t('company.actions.update') }}</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Members Card -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h5 class="card-title">{{ t('company.members.title') }}</h5>
+
+      <!-- Filters -->
+      <div class="row g-2 mb-3">
+        <div class="col-md-6">
+          <input id="memberSearch" class="form-control" placeholder="{{ t('company.members.searchPlaceholder') }}">
+        </div>
+        <div class="col-md-6">
+          <select id="roleFilter" class="form-select">
+            <option value="">{{ t('company.members.filters.all') }}</option>
+            <option value="Company Organizer">{{ t('company.members.filters.organizer') }}</option>
+            <option value="User">{{ t('company.members.filters.user') }}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Members Table -->
+      <div class="table-responsive">
+        <table class="table align-middle table-hover" id="membersTable">
+          <thead class="table-light">
+            <tr>
+              <th>{{ t('company.members.headers.username') }}</th>
+              <th>{{ t('company.members.headers.email') }}</th>
+              <th>{{ t('company.members.headers.role') }}</th>
+              <th>{{ t('company.members.headers.monthly') }}</th>
+              <th>{{ t('company.members.headers.oneOff') }}</th>
+              <th class="text-end">{{ t('company.members.headers.actions') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for member in members %}
+          <tr data-role="{% if member.is_comorg %}Company Organizer{% else %}User{% endif %}">
+            <td>{{ member.username }}</td>
+            <td>{{ member.email }}</td>
+            <td>
+              {% if member.is_comorg %}
+                {{ t('company.members.roleOrganizer') }}
+              {% else %}
+                {{ t('company.members.roleUser') }}
+              {% endif %}
+            </td>
+            <td>{{ (member.monthly_quota or 0) - (member.monthly_used or 0) }}</td>
+            <td>{{ member.extra_credits or 0 }}</td>
+            <td class="text-end">
+
+              {% if current_user.is_admin %}
+              <div class="d-inline-block me-2">
+                <form method="post" action="{{ url_for('update_company_user', company_id=company.id, user_id=member.id) }}" class="d-flex gap-1">
+                  <input class="form-control form-control-sm w-25 text-center" type="number" name="monthly_quota" value="{{ member.monthly_quota or 0 }}">
+                  <input class="form-control form-control-sm w-25 text-center" type="number" name="extra_credits" value="{{ member.extra_credits or 0 }}">
+                  <input class="form-control form-control-sm w-25" type="password" name="password" placeholder="{{ t('company.members.inputs.newPassword') }}">
+                  <button class="btn btn-sm btn-outline-primary">{{ t('company.actions.save') }}</button>
+                </form>
+              </div>
+              {% endif %}
+
+              {% if can_manage and member.id != current_user.id %}
+              <form method="post" action="{{ url_for('remove_company_user', company_id=company.id, user_id=member.id) }}" class="d-inline">
+                <button class="btn btn-sm btn-outline-danger">{{ t('company.actions.remove') }}</button>
+              </form>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add New Member -->
+  {% if can_manage %}
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h5 class="card-title">{{ t('company.addMember.title') }}</h5>
+      <form method="post" action="{{ url_for('add_company_user', company_id=company.id) }}" class="row g-2 align-items-end">
+        <div class="col-md-3">
+          <input class="form-control" name="username" placeholder="{{ t('company.addMember.username') }}" required>
+        </div>
+        <div class="col-md-3">
+          <input class="form-control" name="email" type="email" placeholder="{{ t('company.addMember.email') }}" required>
+        </div>
+        <div class="col-md-3">
+          <input class="form-control" name="password" type="password" placeholder="{{ t('company.addMember.password') }}" required>
+        </div>
+        <div class="col-md-2 form-check ps-4">
+          <input class="form-check-input" type="checkbox" value="1" id="is_comorg" name="is_comorg">
+          <label class="form-check-label" for="is_comorg">{{ t('company.members.roleOrganizer') }}</label>
+        </div>
+        <div class="col-md-auto">
+          <button class="btn btn-warning fw-semibold" type="submit">{{ t('company.actions.add') }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Danger Zone -->
+  {% if can_manage %}
+  <div class="card border-danger mb-4">
+    <div class="card-body">
+      <h5 class="card-title text-danger">{{ t('company.dangerZone.title', default="Danger Zone") }}</h5>
+      <form method="post" action="{{ url_for('delete_company', company_id=company.id) }}" onsubmit="return confirm('{{ t('company.confirmDelete') }}');">
+        <button class="btn btn-danger">{{ t('company.actions.deleteCompany') }}</button>
+      </form>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

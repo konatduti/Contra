@@ -1,0 +1,560 @@
+{% extends "base.html" %}
+{% block title %}{{ t('platform.pageTitle') }}{% endblock %}
+{% block content %}
+<h2 class="mb-4">{{ t('platform.heading') }}</h2>
+<div class="mb-4">
+  <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#impactNumbers" aria-expanded="false" aria-controls="impactNumbers">
+    <i class="fas fa-chart-line me-2"></i>{{ t('platform.impact.toggle') }}
+  </button>
+  <button class="btn btn-outline-secondary ms-2" type="button" data-bs-toggle="modal" data-bs-target="#activityLogModal">
+    <i class="fas fa-clock-rotate-left me-2"></i>{{ t('platform.activity.button') }}
+  </button>
+  <a class="btn btn-outline-secondary ms-2" href="{{ url_for('admin_legal_docs_editor') }}">
+    <i class="fas fa-file-contract me-2"></i>Edit legal docs
+  </a>
+  <button class="btn btn-outline-success ms-2" type="button" data-bs-toggle="modal" data-bs-target="#broadcastModal">
+    <i class="fas fa-paper-plane me-2"></i>{{ t('platform.messages.button') }}
+  </button>
+  <div class="collapse mt-3" id="impactNumbers">
+    <div class="card shadow-sm">
+      <div class="card-body text-center">
+        <p class="display-6 fw-bold mb-1">{{ impact_numbers.companies_adjusted }}</p>
+        <p class="text-muted small mb-0">{{ t('platform.impact.companies.subtitle') }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="activityLogModal" tabindex="-1" aria-labelledby="activityLogModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="activityLogModalLabel">{{ t('platform.activity.title') }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ t('common.close') }}"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-4">
+          <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+            <h5 class="mb-0">
+              <i class="fas fa-globe me-2 text-primary"></i>{{ t('platform.activity.visits.title', 'Recent visits') }}
+            </h5>
+            <div class="d-flex flex-wrap gap-2">
+              <div class="d-flex align-items-center gap-2">
+                <label class="form-label text-muted small mb-0" for="visitTypeFilter">{{ t('platform.activity.visits.filters.type.label', 'Visit type') }}</label>
+                <select class="form-select form-select-sm" id="visitTypeFilter">
+                  <option value="all">{{ t('platform.activity.visits.filters.type.all', 'All') }}</option>
+                  <option value="human">{{ t('platform.activity.visits.types.human', 'Human') }}</option>
+                  <option value="bot">{{ t('platform.activity.visits.types.bot', 'Bot') }}</option>
+                  <option value="unknown">{{ t('platform.activity.visits.types.unknown', 'Unknown') }}</option>
+                </select>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <label class="form-label text-muted small mb-0" for="visitDateFilter">{{ t('platform.activity.visits.filters.date', 'Date') }}</label>
+                <input type="date" class="form-control form-control-sm" id="visitDateFilter">
+              </div>
+            </div>
+          </div>
+          {% if recent_visits %}
+          <div class="table-responsive">
+            <table class="table table-sm align-middle" id="recentVisitsTable">
+              <thead>
+                <tr>
+                  <th scope="col">{{ t('platform.activity.visits.headers.timestamp', 'Timestamp') }}</th>
+                  <th scope="col">{{ t('platform.activity.visits.headers.ip', 'IP') }}</th>
+                  <th scope="col">{{ t('platform.activity.visits.headers.location', 'Location') }}</th>
+                  <th scope="col">{{ t('platform.activity.visits.headers.type', 'Type') }}</th>
+                  <th scope="col">{{ t('platform.activity.visits.headers.userAgent', 'User agent') }}</th>
+                  <th scope="col">{{ t('platform.activity.visits.headers.path', 'Path') }}</th>
+                  <th scope="col" class="text-end">{{ t('platform.activity.visits.headers.actions', 'Details') }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for visit in recent_visits %}
+                {% set details = visit.details_dict %}
+                {% set user_agent_full = details.get('user_agent_full') or visit.user_agent %}
+                {% set visit_type = (visit.visit_type or 'unknown')|lower %}
+                {% set visit_date = visit.occurred_at.strftime('%Y-%m-%d') if visit.occurred_at else '' %}
+                <tr data-visit-type="{{ visit_type }}" data-visit-date="{{ visit_date }}" data-visit-id="{{ visit.id }}">
+                  <td class="text-nowrap">
+                    {% if visit.occurred_at %}
+                    {{ visit.occurred_at|format_budapest_time('%Y-%m-%d %H:%M') }}
+                    {% else %}
+                    {{ t('common.notAvailable') }}
+                    {% endif %}
+                  </td>
+                  <td><code>{{ visit.ip_address or t('common.notAvailable') }}</code></td>
+                  <td>
+                    {% if visit.country or visit.city %}
+                      {% if visit.country %}{{ visit.country }}{% endif %}{% if visit.country and visit.city %}, {% endif %}{% if visit.city %}{{ visit.city }}{% endif %}
+                    {% elif visit.location_label %}
+                      {{ visit.location_label }}
+                    {% else %}
+                      {{ t('platform.activity.noLocation') }}
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if visit_type == 'human' %}
+                      <span class="badge bg-success">{{ t('platform.activity.visits.types.human', 'Human') }}</span>
+                    {% elif visit_type == 'bot' %}
+                      <span class="badge bg-danger">{{ t('platform.activity.visits.types.bot', 'Bot') }}</span>
+                    {% else %}
+                      <span class="badge bg-secondary">{{ t('platform.activity.visits.types.unknown', 'Unknown') }}</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if visit.user_agent or user_agent_full %}
+                      {% set displayed_agent = visit.user_agent %}
+                      {% if not displayed_agent and user_agent_full %}
+                        {% set displayed_agent = user_agent_full[:120] ~ ('…' if user_agent_full|length > 120 else '') %}
+                      {% endif %}
+                      <span data-bs-toggle="tooltip" title="{{ user_agent_full or visit.user_agent }}">{{ displayed_agent }}</span>
+                    {% else %}
+                      <span class="text-muted">{{ t('common.notAvailable') }}</span>
+                    {% endif %}
+                  </td>
+                  <td class="text-break small"><code>{{ visit.path or details.get('path') or t('platform.activity.unknownPath') }}</code></td>
+                  <td class="text-end">
+                    <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#visitDetails{{ visit.id }}" aria-expanded="false" aria-controls="visitDetails{{ visit.id }}">
+                      <i class="fas fa-circle-info"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr class="collapse" id="visitDetails{{ visit.id }}" data-bs-parent="#recentVisitsTable" data-visit-details-for="{{ visit.id }}">
+                  <td colspan="7" class="bg-body-secondary-subtle">
+                    <div class="small">
+                      <div class="mb-2">
+                        <strong>{{ t('platform.activity.visits.details.path', 'Path') }}:</strong>
+                        <code class="text-break">{{ visit.path or details.get('path') or t('platform.activity.unknownPath') }}</code>
+                      </div>
+                      <div class="mb-2">
+                        <strong>{{ t('platform.activity.visits.details.referrer', 'Referrer') }}:</strong>
+                        {% if details.get('referrer') %}
+                          <span class="text-break">{{ details.get('referrer') }}</span>
+                        {% else %}
+                          <span class="text-muted">{{ t('common.notAvailable') }}</span>
+                        {% endif %}
+                      </div>
+                      <div class="mb-2">
+                        <strong>{{ t('platform.activity.visits.details.userAgent', 'Full user agent') }}:</strong>
+                        {% if user_agent_full %}
+                          <span class="text-break">{{ user_agent_full }}</span>
+                        {% else %}
+                          <span class="text-muted">{{ t('common.notAvailable') }}</span>
+                        {% endif %}
+                      </div>
+                      {% if details.get('headers') %}
+                      <div class="mb-0">
+                        <strong>{{ t('platform.activity.visits.details.headers', 'Captured headers') }}:</strong>
+                        <ul class="small mb-0">
+                          {% for header, value in details.get('headers').items() %}
+                          <li><span class="fw-semibold">{{ header }}</span>: <span class="text-break">{{ value }}</span></li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                      {% endif %}
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <p class="text-muted mb-0">{{ t('platform.activity.visits.empty', 'No visits recorded yet.') }}</p>
+          {% endif %}
+        </div>
+        <hr class="my-4">
+        {% if activity_logs %}
+        <div class="table-responsive">
+          <table class="table table-sm align-middle activity-table">
+            <thead>
+              <tr>
+                <th scope="col">{{ t('platform.activity.headers.time') }}</th>
+                <th scope="col">{{ t('platform.activity.headers.event') }}</th>
+                <th scope="col">{{ t('platform.activity.headers.user') }}</th>
+                <th scope="col">{{ t('platform.activity.headers.company') }}</th>
+                <th scope="col">{{ t('platform.activity.headers.ip') }}</th>
+                <th scope="col">{{ t('platform.activity.headers.location') }}</th>
+                <th scope="col">{{ t('platform.activity.headers.duration') }}</th>
+                <th scope="col">{{ t('platform.activity.headers.status') }}</th>
+                <th scope="col">{{ t('platform.activity.headers.shared') }}</th>
+                <th scope="col">{{ t('platform.activity.headers.credit') }}</th>
+                <th scope="col">{{ t('platform.activity.headers.details') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for activity in activity_logs %}
+              {% set details = activity.details_dict %}
+              <tr class="{% if activity.is_analysis %}table-warning{% else %}table-light{% endif %}">
+                <td class="text-nowrap">
+                  {% if activity.occurred_at %}
+                  {{ activity.occurred_at|format_budapest_time('%Y-%m-%d %H:%M') }}
+                  {% else %}
+                  {{ t('common.notAvailable') }}
+                  {% endif %}
+                </td>
+                <td>
+                  {% if activity.is_analysis %}
+                  <span class="badge activity-badge activity-badge-analysis">
+                    <i class="fas fa-microscope me-1"></i>{{ t('platform.activity.event.analysis', 'Analysis') }}
+                  </span>
+                  {% else %}
+                  <span class="badge activity-badge activity-badge-visit">
+                    <i class="fas fa-person-walking me-1"></i>{{ t('platform.activity.event.visit', 'Visit') }}
+                  </span>
+                  {% endif %}
+                </td>
+                <td>{{ activity.user.username if activity.user else t('platform.activity.unknownUser') }}</td>
+                <td>{{ activity.company.name if activity.company else t('platform.activity.unknownCompany') }}</td>
+                <td><code>{{ activity.ip_address or t('common.notAvailable') }}</code></td>
+                <td>{{ activity.location_label or t('platform.activity.noLocation') }}</td>
+                <td>{{ activity.duration_label or t('common.notAvailable') }}</td>
+                <td>
+                  {% if activity.analysis_status %}
+                  {{ t('platform.activity.statusLabels.' ~ activity.analysis_status, activity.analysis_status|capitalize) }}
+                  {% else %}
+                  {{ t('common.notAvailable') }}
+                  {% endif %}
+                </td>
+                <td>
+                  {% if activity.shared_with_contra is none %}
+                  {{ t('common.notAvailable') }}
+                  {% elif activity.shared_with_contra %}
+                  {{ t('common.yes') }}
+                  {% else %}
+                  {{ t('common.no') }}
+                  {% endif %}
+                </td>
+                <td>
+                  {% if activity.credit_type %}
+                  {{ activity.credit_type.replace('_', ' ')|title }}
+                  {% else %}
+                  {{ t('common.notAvailable') }}
+                  {% endif %}
+                </td>
+                <td>
+                  {% if activity.is_analysis %}
+                  <div class="fw-semibold">{{ details.get('document_name', t('platform.activity.unknownDocument')) }}</div>
+                  {% if details.get('analysis_id') %}
+                  <small class="text-muted">#{{ details.get('analysis_id') }}</small>
+                  {% endif %}
+                  {% else %}
+                  <div>
+                    <span class="fw-semibold">{{ details.get('method', 'GET') }}</span>
+                    <code class="ms-1">{{ details.get('path', t('platform.activity.unknownPath')) }}</code>
+                  </div>
+                  {% if details.get('endpoint') %}
+                  <small class="text-muted">{{ details.get('endpoint') }}</small>
+                  {% endif %}
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <p class="text-muted mb-0">{{ t('platform.activity.empty') }}</p>
+        {% endif %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ t('common.close') }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="broadcastModal" tabindex="-1" aria-labelledby="broadcastModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <form method="post" action="{{ url_for('admin_send_message') }}">
+        <div class="modal-header">
+          <h5 class="modal-title" id="broadcastModalLabel">{{ t('platform.messages.title') }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ t('common.close') }}"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label" for="broadcastSubject">{{ t('platform.messages.subject') }}</label>
+            <input type="text" class="form-control" id="broadcastSubject" name="subject" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="broadcastRecipients">{{ t('platform.messages.recipients') }}</label>
+            <select class="form-select" id="broadcastRecipients" name="company_ids" multiple required>
+              <option value="__all__">{{ t('platform.messages.allOption') }}</option>
+              {% for company in companies %}
+              <option value="{{ company.id }}">{{ company.name }}</option>
+              {% endfor %}
+            </select>
+            <div class="form-text">{{ t('platform.messages.recipientsHint') }}</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="broadcastBody">{{ t('platform.messages.body') }}</label>
+            <textarea class="form-control" id="broadcastBody" name="body" rows="6" required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ t('common.cancel') }}</button>
+          <button type="submit" class="btn btn-primary">{{ t('platform.messages.send') }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<h4>{{ t('platform.requests.title') }}</h4>
+<table class="table table-sm align-middle">
+  <tr>
+    <th>{{ t('platform.requests.headers.contact') }}</th>
+    <th>{{ t('platform.requests.headers.username') }}</th>
+    <th>{{ t('platform.requests.headers.company') }}</th>
+    <th>{{ t('platform.requests.headers.email') }}</th>
+    <th>{{ t('platform.requests.headers.message') }}</th>
+    <th>{{ t('platform.requests.headers.actions') }}</th>
+  </tr>
+  {% for req in requests %}
+  <tr>
+    <td>{{ req.name }}</td>
+    <td><code>{{ req.username }}</code></td>
+    <td>{{ req.company }}</td>
+    <td>{{ req.email }}</td>
+    <td class="small">
+      {% if req.message %}
+      <div class="text-break">{{ req.message | e | replace('\n', '<br>') | safe }}</div>
+      {% else %}
+      <span class="text-muted">{{ t('common.notAvailable') }}</span>
+      {% endif %}
+    </td>
+    <td>
+      <button
+        type="button"
+        class="btn btn-success btn-sm"
+        data-bs-toggle="modal"
+        data-bs-target="#approveRequestModal"
+        data-request-id="{{ req.id }}"
+        data-request-name="{{ req.name }}"
+        data-request-username="{{ req.username }}"
+        data-request-company="{{ req.company }}"
+        data-request-email="{{ req.email }}"
+      >
+        {{ t('platform.requests.accept') }}
+      </button>
+      <form method="post" action="{{ url_for('reject_request', request_id=req.id) }}" class="d-inline ms-1">
+        <button class="btn btn-danger btn-sm">{{ t('platform.requests.reject') }}</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
+<div class="modal fade" id="approveRequestModal" tabindex="-1" aria-labelledby="approveRequestLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="post" action="{{ url_for('accept_request') }}" id="approveRequestForm">
+        <div class="modal-header">
+          <h5 class="modal-title" id="approveRequestLabel">{{ t('platform.requests.accept') }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ t('common.close') }}"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="request_id" id="approveRequestId">
+          <p class="small text-muted mb-3" id="approveRequestSummary"></p>
+          <div class="mb-3">
+            <label class="form-label" for="approveSeatLimit">{{ t('platform.companies.headers.seats') }}</label>
+            <input type="number" class="form-control" name="seat_limit" id="approveSeatLimit" min="1" value="1" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="approveMonthlyQuota">{{ t('platform.companies.monthlyPlaceholder') }}</label>
+            <input type="number" class="form-control" name="monthly_quota" id="approveMonthlyQuota" min="0" value="0" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="approveExtraCredits">{{ t('platform.companies.oneOffPlaceholder') }}</label>
+            <input type="number" class="form-control" name="extra_credits" id="approveExtraCredits" min="0" value="0" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ t('common.cancel') }}</button>
+          <button type="submit" class="btn btn-success">{{ t('platform.requests.accept') }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<h4 class="mt-5">{{ t('platform.settings.title') }}</h4>
+<form method="post" action="{{ url_for('admin_update_settings') }}" class="mb-3">
+  <div class="form-check form-switch mb-2">
+    <input class="form-check-input" type="checkbox" id="use_pii_sanitizer" name="use_pii_sanitizer" {% if settings.get("use_pii_sanitizer") == 'true' %}checked{% endif %}>
+    <label class="form-check-label" for="use_pii_sanitizer">{{ t('platform.settings.enableSanitizer') }}</label>
+  </div>
+  <div class="form-check form-switch mb-2">
+    <input class="form-check-input" type="checkbox" id="legal_terms_banner" name="legal_terms_banner" {% if settings.get("legal_terms_banner") == 'true' %}checked{% endif %}>
+    <label class="form-check-label" for="legal_terms_banner">Show Terms &amp; Conditions update banner</label>
+  </div>
+  <div class="form-check form-switch mb-2">
+    <input class="form-check-input" type="checkbox" id="legal_privacy_banner" name="legal_privacy_banner" {% if settings.get("legal_privacy_banner") == 'true' %}checked{% endif %}>
+    <label class="form-check-label" for="legal_privacy_banner">Show Privacy Policy update banner</label>
+  </div>
+  <button class="btn btn-primary btn-sm" type="submit">{{ t('platform.actions.save') }}</button>
+</form>
+
+<h4 class="mt-5">{{ t('platform.companies.title') }}</h4>
+<form method="post" action="{{ url_for('admin_create_company') }}" class="row g-2 mb-3">
+  <div class="col-md">
+    <input class="form-control" name="name" placeholder="{{ t('platform.companies.namePlaceholder') }}" required>
+  </div>
+  <div class="col-md">
+    <input class="form-control" type="number" name="seat_limit" placeholder="{{ t('platform.companies.seatsPlaceholder') }}" value="1">
+  </div>
+  <div class="col-md">
+    <input class="form-control" type="number" name="monthly_quota" placeholder="{{ t('platform.companies.monthlyPlaceholder') }}" value="0">
+  </div>
+  <div class="col-md">
+    <input class="form-control" type="number" name="extra_credits" placeholder="{{ t('platform.companies.oneOffPlaceholder') }}" value="0">
+  </div>
+  <div class="col-md-auto">
+    <button class="btn btn-primary" type="submit">{{ t('platform.actions.create') }}</button>
+  </div>
+</form>
+<table class="table table-sm">
+  <tr><th>{{ t('platform.companies.headers.name') }}</th><th>{{ t('platform.companies.headers.seats') }}</th><th>{{ t('platform.companies.headers.credits') }}</th><th>{{ t('platform.companies.headers.actions') }}</th></tr>
+  {% for company in companies %}
+  <tr>
+    <td>{{ company.name }}</td>
+    <td>{{ company.users|length }}/{{ company.seat_limit }}</td>
+    <td>{{ t('platform.companies.creditSummary', monthly=(company.monthly_quota or 0) - (company.monthly_used or 0), oneoff=company.extra_credits or 0) }}</td>
+    <td>
+      <a class="btn btn-primary btn-sm" href="{{ url_for('company_organizer_dashboard', company_id=company.id) }}">{{ t('platform.companies.open') }}</a>
+      <form method="post" action="{{ url_for('admin_delete_company', company_id=company.id) }}" class="d-inline ms-1" onsubmit="return confirm('{{ t('platform.companies.confirmDelete') }}');">
+        <button class="btn btn-danger btn-sm">{{ t('platform.actions.delete') }}</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
+<h4 class="mt-5">{{ t('platform.createUser.title') }}</h4>
+<form method="post" action="{{ url_for('admin_create_user') }}" class="row g-2 mb-3">
+  <div class="col-md-2">
+    <input class="form-control" name="username" placeholder="{{ t('platform.createUser.username') }}" required>
+  </div>
+  <div class="col-md-2">
+    <input class="form-control" type="email" name="email" placeholder="{{ t('platform.createUser.email') }}" required>
+  </div>
+  <div class="col-md-2">
+    <input class="form-control" type="password" name="password" placeholder="{{ t('platform.createUser.password') }}" required>
+  </div>
+  <div class="col-md-2">
+    <input class="form-control" type="number" name="monthly_quota" placeholder="{{ t('platform.createUser.monthlyQuota') }}" value="0">
+  </div>
+  <div class="col-md-2">
+    <select class="form-select" name="company_id">
+      <option value="">{{ t('platform.createUser.noCompany') }}</option>
+      {% for company in companies %}
+      <option value="{{ company.id }}">{{ company.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-1 form-check">
+    <input class="form-check-input" type="checkbox" name="is_admin" id="create_is_admin">
+    <label class="form-check-label" for="create_is_admin">{{ t('platform.createUser.platformAdmin') }}</label>
+  </div>
+  <div class="col-md-1 form-check">
+    <input class="form-check-input" type="checkbox" name="is_comorg" id="create_is_comorg">
+    <label class="form-check-label" for="create_is_comorg">{{ t('platform.createUser.organiser') }}</label>
+  </div>
+  <div class="col-md-1">
+    <button class="btn btn-primary w-100" type="submit">{{ t('platform.actions.create') }}</button>
+  </div>
+</form>
+
+<h4 class="mt-5">{{ t('platform.users.title') }}</h4>
+<table class="table table-sm">
+  <tr><th>{{ t('platform.users.headers.username') }}</th><th>{{ t('platform.users.headers.details') }}</th></tr>
+  {% for user in users %}
+  <tr>
+    <td><strong>{{ user.username }}</strong></td>
+    <td>
+      <form method="post" action="{{ url_for('admin_update_user', user_id=user.id) }}" class="d-flex flex-wrap gap-2 align-items-center">
+        <select class="form-select form-select-sm" name="company_id">
+          <option value="" {% if not user.company_id %}selected{% endif %}>{{ t('platform.users.noCompanyOption') }}</option>
+          {% for company in companies %}
+          <option value="{{ company.id }}" {% if user.company_id == company.id %}selected{% endif %}>{{ company.name }}</option>
+          {% endfor %}
+        </select>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="is_admin" id="admin{{ user.id }}" {% if user.is_admin %}checked{% endif %}>
+          <label class="form-check-label" for="admin{{ user.id }}">{{ t('platform.users.platformAdmin') }}</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="is_comorg" id="comorg{{ user.id }}" {% if user.is_comorg %}checked{% endif %}>
+          <label class="form-check-label" for="comorg{{ user.id }}">{{ t('platform.users.organiser') }}</label>
+        </div>
+        <input type="number" name="monthly_quota" value="{{ user.monthly_quota or 0 }}" class="form-control form-control-sm" placeholder="{{ t('platform.users.inputs.quota') }}">
+        <input type="number" name="credit_amount" class="form-control form-control-sm" placeholder="{{ t('platform.users.inputs.addCredits') }}">
+        <input type="text" name="new_password" class="form-control form-control-sm" placeholder="{{ t('platform.users.inputs.newPassword') }}">
+        <button class="btn btn-sm btn-primary">{{ t('platform.actions.update') }}</button>
+        <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#userCredits{{ user.id }}" aria-expanded="false" aria-controls="userCredits{{ user.id }}">
+          <i class="fas fa-coins me-1"></i>{{ t('platform.users.creditHistory') }}
+        </button>
+      </form>
+      <div class="collapse mt-2" id="userCredits{{ user.id }}">
+        {% set logs = credit_logs.get(user.id, []) %}
+        {% if logs %}
+        <ul class="list-group list-group-flush">
+          {% for txn in logs %}
+          <li class="list-group-item d-flex justify-content-between align-items-start">
+            <div>
+              <div class="fw-semibold">
+                {% if txn.amount > 0 %}<span class="text-success">+{{ txn.amount }}</span>{% else %}<span class="text-danger">{{ txn.amount }}</span>{% endif %} - {{ txn.description }}
+              </div>
+              <small class="text-muted">
+                {{ txn.created_at|format_budapest_time('%Y-%m-%d %H:%M') if txn.created_at else t('common.notAvailable') }}
+                {% if txn.credit_type %} • {{ txn.credit_type.replace('_', ' ')|title }}{% endif %}
+                {% if txn.document %} • {{ txn.document.original_filename }}{% endif %}
+              </small>
+            </div>
+            {% if txn.amount > 0 %}
+            <i class="fas fa-arrow-trend-up text-success"></i>
+            {% else %}
+            <i class="fas fa-arrow-trend-down text-danger"></i>
+            {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-muted mb-0">{{ t('platform.users.noCreditHistory') }}</p>
+        {% endif %}
+      </div>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const approveModal = document.getElementById('approveRequestModal');
+    if (approveModal) {
+      approveModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        if (!button) {
+          return;
+        }
+        const requestId = button.getAttribute('data-request-id');
+        const name = button.getAttribute('data-request-name');
+        const username = button.getAttribute('data-request-username');
+        const company = button.getAttribute('data-request-company');
+        const email = button.getAttribute('data-request-email');
+        approveModal.querySelector('#approveRequestId').value = requestId;
+        const summary = approveModal.querySelector('#approveRequestSummary');
+        if (summary) {
+          summary.textContent = `${name} (${email}) – ${company} [${username}]`;
+        }
+      });
+
+      approveModal.addEventListener('hidden.bs.modal', function () {
+        approveModal.querySelector('#approveSeatLimit').value = 1;
+        approveModal.querySelector('#approveMonthlyQuota').value = 0;
+        approveModal.querySelector('#approveExtraCredits').value = 0;
+      });
+    }
+  });
+</script>
+{% endblock %}

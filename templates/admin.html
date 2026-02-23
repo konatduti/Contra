@@ -1,0 +1,256 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t('admin.pageTitle') }} - Contra{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">
+                <i class="fas fa-cogs text-primary me-2"></i>
+                {{ t('admin.heading') }}
+            </h1>
+        </div>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="display-6 text-primary mb-2">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h4 class="card-title">{{ total_users }}</h4>
+                    <p class="text-muted">{{ t('admin.stats.totalUsers') }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="display-6 text-info mb-2">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h4 class="card-title">{{ total_documents }}</h4>
+                    <p class="text-muted">{{ t('admin.stats.totalDocuments') }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="display-6 text-success mb-2">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h4 class="card-title">{{ successful_analyses }}</h4>
+                    <p class="text-muted">{{ t('admin.stats.successfulAnalyses') }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="display-6 text-danger mb-2">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h4 class="card-title">{{ failed_analyses }}</h4>
+                    <p class="text-muted">{{ t('admin.stats.failedAnalyses') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Uploads -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-clock me-2"></i>{{ t('admin.recentUploads.title') }}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_uploads %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>{{ t('admin.recentUploads.headers.user') }}</th>
+                                    <th>{{ t('admin.recentUploads.headers.document') }}</th>
+                                    <th>{{ t('admin.recentUploads.headers.type') }}</th>
+                                    <th>{{ t('admin.recentUploads.headers.uploadDate') }}</th>
+                                    <th>{{ t('admin.recentUploads.headers.status') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for document, user in recent_uploads %}
+                                <tr>
+                                    <td>
+                                        <div>
+                                            <strong>{{ user.username }}</strong>
+                                            {% if user.company %}
+                                            <br><small class="text-muted">{{ user.company }}</small>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="me-2">
+                                                {% if document.file_type == 'pdf' %}
+                                                    <i class="fas fa-file-pdf text-danger"></i>
+                                                {% elif document.file_type == 'docx' %}
+                                                    <i class="fas fa-file-word text-primary"></i>
+                                                {% elif document.file_type == 'image' %}
+                                                    <i class="fas fa-file-image text-info"></i>
+                                                {% endif %}
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold">{{ document.original_filename }}</div>
+                                                <small class="text-muted">{{ ((document.file_size or 0) / 1024 / 1024)|round(2) }} MB</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">{{ (document.file_type or 'unknown')|upper }}</span>
+                                    </td>
+                                    <td>{{ document.upload_date|format_budapest_time('%Y-%m-%d %H:%M') if document.upload_date else t('common.notAvailable') }}</td>
+                                    <td>
+                                        {% if document.analysis %}
+                                            {% if document.analysis.status == 'completed' %}
+                                                <span class="badge bg-success" data-status="completed">{{ t('common.status.completed') }}</span>
+                                            {% elif document.analysis.status == 'failed' %}
+                                                <span class="badge bg-danger" data-status="failed">{{ t('common.status.failed') }}</span>
+                                            {% else %}
+                                                <span class="badge bg-warning" data-status="pending">{{ t('common.status.pending') }}</span>
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="badge bg-secondary" data-status="unknown">{{ t('common.status.unknown') }}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center">{{ t('admin.recentUploads.empty') }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create User -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i class="fas fa-user-plus me-2"></i>{{ t('admin.createUser.title') }}</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{{ url_for('admin_create_user') }}" class="row g-2">
+                        <div class="col-md-3">
+                            <input type="text" name="username" class="form-control" placeholder="{{ t('admin.createUser.username') }}" required>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="email" name="email" class="form-control" placeholder="{{ t('admin.createUser.email') }}" required>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="password" name="password" class="form-control" placeholder="{{ t('admin.createUser.password') }}" required>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" name="monthly_quota" class="form-control" placeholder="{{ t('admin.createUser.monthlyQuota') }}" value="0">
+                        </div>
+                        <div class="col-md-1">
+                            <button class="btn btn-primary w-100" type="submit">{{ t('admin.actions.create') }}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Management -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-users me-2"></i>{{ t('admin.users.title') }}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>{{ t('admin.users.headers.username') }}</th>
+                                    <th>{{ t('admin.users.headers.monthlyUsage') }}</th>
+                                    <th>{{ t('admin.users.headers.credits') }}</th>
+                                    <th>{{ t('admin.users.headers.actions') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in users %}
+                                <tr>
+                                    <td><strong>{{ user.username }}</strong></td>
+                                    <td>{{ user.monthly_used or 0 }} / {{ user.monthly_quota or 0 }}</td>
+                                    <td>{{ user.extra_credits or 0 }}</td>
+                                    <td>
+                                        <form method="post" action="{{ url_for('admin_update_user', user_id=user.id) }}" class="d-flex flex-wrap gap-2">
+                                            <input type="number" name="monthly_quota" value="{{ user.monthly_quota or 0 }}" class="form-control form-control-sm" placeholder="{{ t('admin.users.inputs.quota') }}">
+                                            <input type="number" name="credit_amount" class="form-control form-control-sm" placeholder="{{ t('admin.users.inputs.addCredits') }}">
+                                            <input type="text" name="new_password" class="form-control form-control-sm" placeholder="{{ t('admin.users.inputs.newPassword') }}">
+                                            <button class="btn btn-sm btn-primary">{{ t('admin.actions.update') }}</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Health -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-heart me-2"></i>{{ t('admin.health.title') }}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-between">
+                                <span>{{ t('admin.health.successRate') }}</span>
+                                <span class="fw-bold text-success">
+                                    {% if total_analyses > 0 %}
+                                        {{ ((successful_analyses / total_analyses) * 100)|round(1) }}%
+                                    {% else %}
+                                        {{ t('common.notAvailable') }}
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-between">
+                                <span>{{ t('admin.health.averageTime') }}</span>
+                                <span class="fw-bold">~2-5 {{ t('admin.health.seconds') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,600 @@
+{
+  "meta": {
+    "defaultTitle": "Contra M Series"
+  },
+  "navigation": {
+    "brand": "Contra",
+    "home": "Kezdőlap",
+    "dashboard": "Vezérlőpult",
+    "upload": "Feltöltés",
+    "companyDashboard": "Vállalati felület",
+    "platformDashboard": "Platform admin",
+    "changePassword": "Jelszó módosítása",
+    "logout": "Kijelentkezés",
+    "login": "Bejelentkezés"
+  },
+  "header": {
+    "themeToggle": "Téma váltása"
+  },
+  "footer": {
+    "brandHeading": "Contra M Series",
+    "tagline": "Hybrid-AI szerződéselemző szoftver",
+    "copyright": "© 2026 Contra Technologies LLC M Series. Minden jog fenntartva.",
+    "terms": "Felhasználási feltételek",
+    "privacy": "Adatvédelem"
+  },
+  "language": {
+    "label": "Nyelv",
+    "options": {
+      "en": "Angol",
+      "hu": "Magyar"
+    }
+  },
+  "common": {
+    "uploadContract": "Szerződés feltöltése",
+    "notAvailable": "N/A",
+    "errorTitle": "Hiba",
+    "status": {
+      "completed": "Kész",
+      "failed": "Hiba",
+      "pending": "Folyamatban",
+      "unknown": "Ismeretlen"
+    },
+    "close": "Bezárás",
+    "yes": "Igen",
+    "no": "Nem"
+  },
+  "credits": {
+    "userMonthly": "Egyéni havi",
+    "userOneOff": "Egyéni eseti",
+    "companyMonthly": "Vállalati havi",
+    "companyOneOff": "Vállalati eseti"
+  },
+  "home": {
+    "title": "Értsen meg bármilyen szerződést másodpercek alatt",
+    "description": "A Contra azonnali, kétnyelvű betekintést nyújt a szerződéseibe automatizált kockázatelemzéssel és tömör összefoglalókkal.",
+    "cta": "Elemzés indítása",
+    "secondary": "Működés megtekintése",
+    "tagline": "AI-alapú szerződéselemzés nemzetközi csapatoknak",
+    "welcome": "Üdvözli a Contra",
+    "hero": {
+      "title": "M Series Szerződéselemző",
+      "subtitle": "A Contra fejlett mesterséges intelligenciával segíti a közép- és kelet-európai KKV-kat és ügyvédi irodákat. Töltse fel szerződéseit, és kapjon azonnali elemzést, kockázati értékelést és javaslatokat.",
+      "actions": {
+        "signIn": "Bejelentkezés",
+        "requestAccess": "Hozzáférés igénylése"
+      }
+    },
+    "features": {
+      "upload": {
+        "title": "Támogatott fájlformátumok",
+        "description": "Töltsön fel PDF-, DOCX- vagy képfájlokat – az OCR technológia a beszkennelt dokumentumok szövegét is felismeri és feldolgozza."
+      },
+      "analysis": {
+        "title": "MI-alapú elemzés",
+        "description": "Fejlett mesterséges intelligencia elemzi a szerződés feltételeit, azonosítja a kockázatokat és gyakorlati ajánlásokat kínál."
+      },
+      "risk": {
+        "title": "Kockázatelemzés és javaslatok",
+        "description": "A rendszer felismeri a potenciális jogi kockázatokat, és konkrét lépéseket javasol azok mérséklésére."
+      }
+    },
+    "process": {
+      "title": "Hogyan működik",
+      "steps": {
+        "upload": {
+          "title": "Feltöltés",
+          "description": "Töltse fel szerződését PDF, DOCX vagy kép formátumban."
+        },
+        "extract": {
+          "title": "Feldolgozás",
+          "description": "OCR rendszerünk felismeri a dokumentumban lévő szöveget."
+        },
+        "analyze": {
+          "title": "Elemzés",
+          "description": "Az MI azonosítja a kulcspontokat és a kockázatokat."
+        },
+        "review": {
+          "title": "Áttekintés",
+          "description": "Részletes elemzést és javaslatokat kap."
+        }
+      }
+    },
+    "returning": {
+      "heading": "Üdv újra, {name}!",
+      "summary": "Eddig {count} szerződést töltött fel.",
+      "cta": "Vezérlőpult megnyitása"
+    }
+  },
+  "dashboard": {
+    "pageTitle": "Vezérlőpult",
+    "heading": "Vezérlőpult",
+    "stats": {
+      "totalContracts": "Összes szerződés",
+      "analyzed": "Elemzett",
+      "pending": "Folyamatban",
+      "monthlyUsage": "Havi felhasználás",
+      "credits": "Kreditek",
+      "shared": "Megosztva a Contrával",
+      "private": "Csak Önnek"
+    },
+    "creditHistory": {
+      "title": "Kreditelőzmény",
+      "toggle": "Kreditelőzmény megjelenítése",
+      "credits": "kredit",
+      "empty": "Még nincs rögzített kreditesemény."
+    },
+    "recentUploads": {
+      "title": "Legutóbbi feltöltések",
+      "headers": {
+        "document": "Dokumentum",
+        "type": "Típus",
+        "uploadDate": "Feltöltés ideje",
+        "status": "Állapot",
+        "visibility": "Elérhetőség",
+        "actions": "Műveletek"
+      },
+      "visibility": {
+        "private": "Privát",
+        "shared": "Megosztva"
+      },
+      "actions": {
+        "viewAnalysis": "Elemzés megtekintése",
+        "processing": "Feldolgozás alatt",
+        "delete": "Dokumentum törlése",
+        "deleteConfirm": "Biztos benne? Ez a művelet nem visszavonható."
+      },
+      "empty": {
+        "title": "Még nincs feltöltött szerződés",
+        "subtitle": "Kezdje el az első dokumentum feltöltésével."
+      }
+    }
+  },
+  "upload": {
+    "pageTitle": "Szerződés feltöltése",
+    "heading": "Szerződés feltöltése",
+    "allowTraining": "Megosztom a Contrával, +1 kreditért",
+    "allowTrainingHelp": "Megosztás esetén nem vonunk le kreditet, és ajándékba +1 kredit jár.",
+    "fileLabel": "Szerződés kiválasztása",
+    "dropzone": {
+      "title": "Húzza ide a szerződést",
+      "subtitle": "vagy kattintson a böngészéshez",
+      "button": "Fájlok böngészése"
+    },
+    "supportedFormats": "Támogatott formátumok: PDF, DOCX, PNG, JPG, JPEG, GIF, BMP, TIFF (max. 50 MB)",
+    "creditLabel": "Kreditek használata",
+    "creditHelp": "Ha megosztja a dokumentumot képzésre, automatikusan visszaadjuk a levont kreditet.",
+    "preview": {
+      "remove": "Fájl eltávolítása"
+    },
+    "submit": "Feltöltés és elemzés",
+    "loading": "Feltöltés és elemzés folyamatban...",
+    "info": {
+      "title": "Mi történik ezután?",
+      "steps": {
+        "extract": {
+          "title": "Feldolgozás",
+          "description": "OCR rendszerünk felismeri a dokumentumban lévő szöveget."
+        },
+        "analysis": {
+          "title": "MI elemzés",
+          "description": "Az MI feltárja a kulcspontokat és kockázatokat."
+        },
+        "risks": {
+          "title": "Kockázatelemzés",
+          "description": "Azonosítjuk a figyelmeztető jeleket."
+        }
+      }
+    },
+    "errors": {
+      "missingFile": "Kérjük, válasszon fájlt a feltöltéshez.",
+      "invalidType": "Nem támogatott fájltípus.",
+      "tooLarge": "A fájl túl nagy (max. 50 MB)."
+    }
+  },
+  "processing": {
+    "pageTitle": "Dokumentum feldolgozása",
+    "heading": "Dokumentuma feldolgozás alatt",
+    "description": "Fejlett MI-vel elemezzük a szerződést. Ez néhány másodpercet igénybe vehet.",
+    "labels": {
+      "document": "Dokumentum:",
+      "started": "Kezdés:"
+    },
+    "steps": {
+      "title": "Feldolgozási lépések",
+      "extract": {
+        "title": "Feldolgozás:",
+        "description": "A dokumentumot olvasható szöveggé alakítjuk"
+      },
+      "analysis": {
+        "title": "MI elemzés:",
+        "description": "Szerződéstípus, kulcspontok és kockázatok azonosítása"
+      },
+      "results": {
+        "title": "Eredmények:",
+        "description": "Részletes elemzési jelentés készítése"
+      }
+    },
+    "status": {
+      "starting": "Feldolgozás indítása...",
+      "ocr": "Feldolgozás folyamatban",
+      "analysis": "Elemzés zajlik",
+      "completed": "Elemzés kész! Átirányítás...",
+      "failed": "Az elemzés nem sikerült. Próbálja újra."
+    }
+  },
+  "analysis": {
+    "pageTitle": "Elemzési eredmények",
+    "heading": "Szerződéselemzés",
+    "visibility": {
+      "private": "Csak Ön látja",
+      "shared": "Megosztva a Contrával"
+    },
+    "actions": {
+      "back": "Vissza a vezérlőpultra"
+    },
+    "document": {
+      "uploaded": "Feltöltve:",
+      "type": "Típus:",
+      "duration": "Elemzési idő: {seconds} mp",
+      "language": "Nyelv:",
+      "contractType": "Típus:"
+    },
+    "status": {
+      "complete": "Elemzés kész",
+      "failed": "Elemzés sikertelen",
+      "pending": "Elemzés folyamatban"
+    },
+    "training": {
+      "heading": "Ez az elemzés privát",
+      "description": "Csak Ön fér hozzá. A fejlesztők nem használhatják képzésre engedély nélkül.",
+      "note": "Megosztás esetén a kredit nem kerül levonásra.",
+      "allowButton": "Engedélyezem a fejlesztőknek a használatot",
+      "reward": "+1 kredit jár köszönetképpen."
+    },
+    "sections": {
+      "title": "Elemzés eredménye",
+      "summary": "Összefoglaló",
+      "keyTerms": "Kulcspontok",
+      "risks": "Kockázatok",
+      "legalReferences": "Jogi hivatkozások",
+      "referenceIssues": "Hivatkozási problémák",
+      "empty": "A tartalom az elemzés elkészülte után jelenik meg."
+    },
+    "summaryModes": {
+      "label": "Összefoglaló hossza",
+      "short": "Rövid",
+      "normal": "Normál",
+      "detailed": "Részletes"
+    },
+    "feedback": {
+      "heading": "Visszajelzés",
+      "prompt": "Ha szeretné, ossza meg visszajelzését az elemzésről.",
+      "trainingNotice": "A visszajelzés segít fejleszteni a rendszert — a dokumentumot csak tanulási célra használjuk.",
+      "label": "Visszajelzés",
+      "placeholder": "Ossza meg gondolatait...",
+      "ratingLabel": "Értékelés (opcionális)",
+      "submit": "Visszajelzés elküldése (+1 kredit)",
+      "previous": "Korábbi visszajelzések",
+      "creditAwarded": "Kredit jóváírva",
+      "empty": "Még senki sem adott visszajelzést, legyen Ön az első, és szerezzen kreditet!",
+      "you": "Ön",
+      "ratingValue": "Értékelés: {value}/5"
+    },
+    "pending": {
+      "message": "A szerződés elemzése folyamatban van. Kérjük, nézzen vissza néhány pillanat múlva.",
+      "refresh": "Frissítés"
+    },
+    "failure": {
+      "unknown": "Ismeretlen hiba történt.",
+      "retry": "Újra próbálom"
+    }
+  },
+  "auth": {
+    "login": {
+      "pageTitle": "Bejelentkezés",
+      "heading": "Bejelentkezés",
+      "subheading": "Üdv újra a Contránál",
+      "username": "Felhasználónév",
+      "password": "Jelszó",
+      "submit": "Bejelentkezés",
+      "noAccount": "Nincs fiókja?",
+      "registerLink": "Regisztráljon itt"
+    },
+    "register": {
+      "pageTitle": "Felhasználó létrehozása",
+      "heading": "Felhasználó létrehozása",
+      "subheading": "Admin: új felhasználó rögzítése",
+      "username": "Felhasználónév",
+      "email": "Email",
+      "company": "Vállalat (opcionális)",
+      "password": "Jelszó",
+      "monthlyQuota": "Havi keret",
+      "platformAdmin": "Platform admin",
+      "companyOrganizer": "Vállalati szervező",
+      "submit": "Létrehozás"
+    },
+    "changePassword": {
+      "pageTitle": "Jelszó módosítása",
+      "heading": "Jelszó módosítása",
+      "current": "Jelenlegi jelszó",
+      "new": "Új jelszó",
+      "submit": "Jelszó frissítése"
+    }
+  },
+  "requestAccess": {
+    "pageTitle": "Hozzáférés kérése",
+    "heading": "Hozzáférés kérése",
+    "name": "Név",
+    "username": "Felhasználónév",
+    "company": "Vállalat",
+    "email": "Email",
+    "message": "Üzenet (opcionális)",
+    "submit": "Kérelem beküldése"
+  },
+  "admin": {
+    "pageTitle": "Admin vezérlőpult",
+    "heading": "Admin vezérlőpult",
+    "stats": {
+      "totalUsers": "Összes felhasználó",
+      "totalDocuments": "Összes dokumentum",
+      "successfulAnalyses": "Sikeres elemzések",
+      "failedAnalyses": "Sikertelen elemzések"
+    },
+    "recentUploads": {
+      "title": "Legutóbbi feltöltések",
+      "headers": {
+        "user": "Felhasználó",
+        "document": "Dokumentum",
+        "type": "Típus",
+        "uploadDate": "Feltöltés ideje",
+        "status": "Állapot"
+      },
+      "empty": "Nincs friss feltöltés"
+    },
+    "createUser": {
+      "title": "Felhasználó létrehozása",
+      "username": "Felhasználónév",
+      "email": "Email",
+      "password": "Jelszó",
+      "monthlyQuota": "Havi keret"
+    },
+    "users": {
+      "title": "Felhasználókezelés",
+      "headers": {
+        "username": "Felhasználónév",
+        "monthlyUsage": "Havi használat",
+        "credits": "Kreditek",
+        "actions": "Műveletek"
+      },
+      "inputs": {
+        "quota": "Keret",
+        "addCredits": "Kreditek hozzáadása",
+        "newPassword": "Új jelszó"
+      }
+    },
+    "actions": {
+      "create": "Létrehozás",
+      "update": "Mentés"
+    },
+    "health": {
+      "title": "Rendszerállapot",
+      "successRate": "Sikerarány:",
+      "averageTime": "Átlagos feldolgozási idő:",
+      "seconds": "másodperc"
+    }
+  },
+  "platform": {
+    "pageTitle": "Platform admin vezérlőpult",
+    "heading": "Platform admin vezérlőpult",
+    "requests": {
+      "title": "Függő hozzáférés-kérelmek",
+      "headers": {
+        "contact": "Kapcsolattartó",
+        "username": "Felhasználónév",
+        "company": "Vállalat",
+        "email": "Email",
+        "message": "Üzenet",
+        "actions": "Műveletek"
+      },
+      "accept": "Elfogadás",
+      "reject": "Elutasítás"
+    },
+    "messages": {
+      "button": "Üzenet küldése",
+      "title": "E-mail küldése cégeknek",
+      "subject": "E-mail tárgya",
+      "recipients": "Cégek kiválasztása",
+      "recipientsHint": "Válasszon egy vagy több céget, vagy jelölje be az Összes céget.",
+      "allOption": "Összes cég",
+      "body": "Üzenet",
+      "send": "E-mail küldése"
+    },
+    "settings": {
+      "title": "Platform beállítások",
+      "enableSanitizer": "PII-anonimizálás engedélyezése"
+    },
+    "actions": {
+      "save": "Mentés",
+      "create": "Létrehozás",
+      "delete": "Törlés",
+      "update": "Frissítés"
+    },
+    "companies": {
+      "title": "Vállalatok",
+      "namePlaceholder": "Vállalat neve",
+      "seatsPlaceholder": "Felhasználói helyek",
+      "monthlyPlaceholder": "Havi kreditek",
+      "oneOffPlaceholder": "Eseti kreditek",
+      "headers": {
+        "name": "Név",
+        "seats": "Helyek",
+        "credits": "Kreditek",
+        "actions": "Műveletek"
+      },
+      "open": "Megnyitás",
+      "confirmDelete": "Törli a vállalatot?",
+      "creditSummary": "Havi: {monthly}, Eseti: {oneoff}"
+    },
+    "createUser": {
+      "title": "Felhasználó létrehozása",
+      "username": "Felhasználónév",
+      "email": "Email",
+      "password": "Jelszó",
+      "monthlyQuota": "Havi keret",
+      "noCompany": "Nincs vállalat",
+      "platformAdmin": "Admin",
+      "organiser": "Szervező"
+    },
+    "users": {
+      "title": "Felhasználók",
+      "headers": {
+        "username": "Felhasználónév",
+        "details": "Részletek"
+      },
+      "noCompanyOption": "Nincs vállalat",
+      "platformAdmin": "Admin",
+      "organiser": "Szervező",
+      "inputs": {
+        "quota": "Keret",
+        "addCredits": "Kreditek hozzáadása",
+        "newPassword": "Új jelszó"
+      },
+      "creditHistory": "Kreditelőzmények",
+      "noCreditHistory": "Ehhez a felhasználóhoz még nem tartozik kreditelőzmény."
+    },
+    "impact": {
+      "toggle": "Regisztrált vállalatok összesen",
+      "companies": {
+        "title": "Regisztrált vállalatok összesen",
+        "subtitle": "Regisztrált vállalatok teljes száma -2 alap fiók"
+      }
+    },
+    "activity": {
+      "button": "Aktivitás",
+      "title": "Legutóbbi aktivitás",
+      "empty": "Még nincs rögzített aktivitás.",
+      "headers": {
+        "time": "Időpont",
+        "event": "Esemény",
+        "user": "Felhasználó",
+        "company": "Vállalat",
+        "ip": "IP cím",
+        "location": "Hely",
+        "duration": "Időtartam",
+        "status": "Státusz",
+        "shared": "Megosztva a Contrával",
+        "credit": "Felhasznált kredit",
+        "details": "Részletek"
+      },
+      "event": {
+        "visit": "Látogatás",
+        "analysis": "Elemzés"
+      },
+      "statusLabels": {
+        "analysis": "Folyamatban",
+        "completed": "Befejezve",
+        "failed": "Sikertelen"
+      },
+      "visits": {
+        "title": "Legutóbbi látogatások",
+        "empty": "Még nincs rögzített látogatás.",
+        "filters": {
+          "type": {
+            "label": "Látogatás típusa",
+            "all": "Mind",
+            "human": "Emberek",
+            "bot": "Robotok",
+            "unknown": "Ismeretlen"
+          },
+          "date": "Szűrés dátum szerint"
+        },
+        "headers": {
+          "timestamp": "Időpont",
+          "ip": "IP cím",
+          "location": "Hely",
+          "type": "Típus",
+          "userAgent": "Böngésző azonosító",
+          "path": "Útvonal",
+          "actions": "Részletek"
+        },
+        "types": {
+          "human": "Ember",
+          "bot": "Robot",
+          "unknown": "Ismeretlen"
+        },
+        "details": {
+          "path": "Útvonal",
+          "referrer": "Hivatkozó",
+          "userAgent": "Teljes user agent",
+          "headers": "Rögzített fejrész"
+        }
+      },
+      "unknownUser": "Ismeretlen felhasználó",
+      "unknownCompany": "Nincs vállalat",
+      "unknownPath": "Ismeretlen útvonal",
+      "unknownDocument": "Ismeretlen dokumentum",
+      "noLocation": "Ismeretlen hely"
+    }
+  },
+  "company": {
+    "pageTitle": "Vállalati felület - {name}",
+    "heading": "Vállalati vezérlőpult - {name}",
+    "seats": "Helyek: {used} / {total}",
+    "credits": "Vállalati kreditek – havi: {monthly}, eseti: {oneoff}",
+    "settings": {
+      "title": "Vállalati beállítások",
+      "seatLimit": "Helyek száma",
+      "monthlyQuota": "Havi kreditek",
+      "oneOffCredits": "Eseti kreditek"
+    },
+    "members": {
+      "title": "Tagok",
+      "searchPlaceholder": "Tagok keresése",
+      "filters": {
+        "all": "Összes szerepkör",
+        "organizer": "Vállalati szervező",
+        "user": "Felhasználó"
+      },
+      "headers": {
+        "username": "Felhasználónév",
+        "email": "Email",
+        "role": "Szerepkör",
+        "monthly": "Havi",
+        "oneOff": "Eseti",
+        "actions": "Műveletek"
+      },
+      "roleOrganizer": "Vállalati szervező",
+      "roleUser": "Felhasználó",
+      "inputs": {
+        "monthly": "Havi",
+        "oneOff": "Eseti",
+        "newPassword": "Új jelszó"
+      }
+    },
+    "addMember": {
+      "title": "Tag hozzáadása",
+      "username": "Felhasználónév",
+      "email": "Email",
+      "password": "Jelszó"
+    },
+    "actions": {
+      "update": "Frissítés",
+      "save": "Mentés",
+      "remove": "Eltávolítás",
+      "add": "Hozzáadás",
+      "deleteCompany": "Vállalat törlése"
+    },
+    "confirmDelete": "Biztosan törli a vállalatot?"
+  },
+  "legal": {
+    "terms": {
+      "title": "Felhasználási feltételek",
+      "content": "# Általános Szerződési Feltételek – Contra Technologies Kft.\n\nJelen dokumentum a Contra Technologies Kft. mesterséges intelligencián alapuló szerződés- és kockázatelemző szolgáltatásának igénybevételére vonatkozó feltételeket, valamint az ezzel kapcsolatos jogviszonyokat szabályozza. A szolgáltatás használatával Ön elfogadja a jelen Általános Szerződési Feltételeket.\n\nKérjük, hogy a szolgáltatás igénybevétele előtt figyelmesen olvassa el az alábbi rendelkezéseket.\n\nSzolgáltató:  \nContra Technologies Korlátolt Felelősségű Társaság  \nSzékhely: 2132 Göd, Kacsóh Pongrác utca 6.  \nCégjegyzékszám: 13-09-238567  \nAdószám: 32743117-2-13  \nKapcsolattartás: admin@contraai.hu\n\nJelen dokumentum az Európai Gazdasági Térség (EGT) területén érvényes. Az EGT-n kívüli felhasználók a szolgáltatás igénybevétele előtt kötelesek kapcsolatba lépni velünk az admin@contraai.hu címen.\n\n## A szolgáltatás jellege – fontos tudnivaló\n\nA Contra Technologies Kft. által biztosított AI-alapú szerződésértelmező rendszer előzetes hozzáférés keretében érhető el, fejlesztés alatt álló megoldás. Nem végleges, nem stabil kiadás, használata fokozott körültekintést igényel, és teljes mértékben az Ön felelősségére történik. A Szolgáltató nem vállal felelősséget az esetleges hibákért, félreértelmezésekért vagy a szolgáltatás használatából eredő jogi, pénzügyi vagy egyéb károkért.\n\n## Hozzáférés a szolgáltatáshoz\n\nA szolgáltatás nem nyilvános, csak előzetes jóváhagyást követően vehető igénybe. A hozzáférési kérelmeket a honlapon található „Hozzáférés igénylése” funkción keresztül kell benyújtani. A Szolgáltató fenntartja a jogot a hozzáférési kérelmek elutasítására vagy a szolgáltatáshoz való hozzáférés visszavonására, indokolás nélkül. A szolgáltatás jelenleg kizárólag vállalati felhasználók számára érhető el, magánszemélyek számára nem biztosított.\n\n## Nem minősül jogi szolgáltatásnak\n\nA szolgáltatás nem nyújt ügyvédi vagy jogi tanácsadást, és nem helyettesíti a jogi szakértőt. Célja, hogy segítse a felhasználókat a szerződések és jogi dokumentumok megértésében, egyszerűsítse a jogi nyelvezetet, és részleges információs támogatást nyújtson üzleti döntésekhez. A szolgáltatás nem biztosít jogi képviseletet, nem minősíti a szerződések érvényességét, és nem ad hivatalos jogi állásfoglalást. A GDPR és az irányadó adatvédelmi jogszabályok szerint a szolgáltatás nem használ, nem tárol és nem dolgoz fel bizalmas vagy személyes jogi adatokat jogi tevékenység végzésének céljából.\n\n## Adatbiztonság és tárolás\n\nA Contra Technologies Kft. elkötelezett a felhasználói adatok védelme mellett. Minden személyes és szerződéses adat titkosított formában, az Amazon Web Services EMEA SARL frankfurti adatközpontjaiban található biztonságos szervereken kerül tárolásra. Harmadik fél számára adatokat csak jogszabályi kötelezettség esetén adunk át. Az AI-alapú elemzési folyamatok teljes mértékben automatizáltak, emberi beavatkozás nélkül zajlanak.\n\n## Felelősségkorlátozás\n\nA Szolgáltató nem felel a szolgáltatás használatából eredő közvetlen vagy közvetett károkért. Nem vállal garanciát arra, hogy az AI-alapú elemzések minden esetben pontosak vagy teljes körűek, és fenntartja a jogot a szolgáltatás bármely részének módosítására vagy felfüggesztésére. A szolgáltatás eredményeire alapozott üzleti vagy jogi döntések meghozatala előtt minden esetben javasoljuk jogi tanácsadó igénybevételét.\n\n## Módosítások és hatály\n\nJelen Általános Szerződési Feltételek az EGT területén alkalmazandók. Az EGT-n kívüli felhasználók részére eltérő feltételek érvényesek, amelyek az admin@contraai.hu címen kérhetők. A Contra Technologies Kft. fenntartja a jogot a jelen feltételek bármikori módosítására. A változásokat a weboldalon tesszük közzé, és jelentős módosítás esetén a regisztrált felhasználókat értesítjük.\n\n## Összefoglaló\n\nA szolgáltatás előzetes hozzáférés keretében érhető el, használata saját felelősségre történik. Nem nyilvános, igénybevételéhez jóváhagyás szükséges. Nem minősül jogi tanácsadásnak. Az adatok biztonságos, frankfurti AWS szervereken kerülnek tárolásra, harmadik félnek nem adjuk át. A jelen feltételek kizárólag az Európai Gazdasági Térségben érvényesek."
+    },
+    "privacy": {
+      "title": "Adatkezelési tájékoztató",
+      "content": "# Adatvédelmi Tájékoztató – Contra Technologies Kft.\n\nUtolsó frissítés dátuma: 2025.10.13.\n\nJelen Adatvédelmi Tájékoztató bemutatja, hogyan gyűjtjük, használjuk, tároljuk és védjük az Ön személyes adatait, amikor igénybe veszi a Contra Technologies Kft. mesterséges intelligencián alapuló jogi szolgáltatásait. A dokumentum azt is ismerteti, hogy Ön milyen adatvédelmi jogokkal rendelkezik, és miként biztosítjuk az adatai bizalmas kezelését.\n\nA Tájékoztató az (EU) 2016/679 rendelet (Általános Adatvédelmi Rendelet, GDPR) és a vonatkozó magyar, valamint uniós jogszabályok alapján készült, és az Európai Gazdasági Térségben (EGT) alkalmazandó.\n\n## Adatkezelő\n\nAz adatkezelésért felelős szervezet:\nContra Technologies Kft.  \nSzékhely: 2132 Göd, Kacsóh Pongrác utca 6.  \nKapcsolattartó: Bitemo Erik Gergely  \nE-mail: admin@contraai.hu  \nAdószám: 32743117-2-13\n\nA Contra Technologies Kft. adatkezelőként jár el, és gondoskodik a GDPR rendelkezéseinek betartásáról.\n\n## Milyen személyes adatokat gyűjtünk?\n\nAz alábbi adatcsoportokat kezelhetjük:  \n- Azonosítási és kapcsolattartási adatok (név, e-mail-cím, cég, beosztás).  \n- A feltöltött dokumentumokban szereplő információk, amennyiben azok személyes adatnak minősülnek.  \n- Bejelentkezési adatok és felhasználói azonosítók.  \n- Technikai adatok (IP-cím, böngésző típusa, használt eszköz adatai).  \n- Visszajelzések, értékelések és ügyfélszolgálati kommunikáció.\n\n## Hogyan használjuk az adatokat?\n\nA személyes adatokat az alábbi célokra kezeljük:  \n- A szolgáltatás biztosítása, a feltöltött dokumentumok feldolgozása és elemzése.  \n- Felhasználói fiókok létrehozása, karbantartása és azonosítása.  \n- Kommunikáció és ügyfélszolgálati támogatás nyújtása.  \n- Számlázási és adminisztratív kötelezettségek teljesítése.  \n- A szolgáltatás fejlesztése, minőségbiztosítás és hibakeresés.  \n- Jogszabályi kötelezettségek teljesítése, valamint jogi igények előterjesztése vagy védelme.\n\n## Az adatkezelés jogalapjai\n\nAz adatkezelés jogalapjai lehetnek:  \n- Az Ön hozzájárulása, különösen az önkéntesen megadott adatok esetén.  \n- Szerződés teljesítése, amikor a szolgáltatás nyújtásához szükséges adatokat kezeljük.  \n- Jogi kötelezettség teljesítése, például számviteli szabályoknak való megfelelés.  \n- A Szolgáltató jogos érdeke, például a szolgáltatás biztonságának megőrzése vagy jogi igények kezelése.\n\n## Adatmegőrzés\n\nA személyes adatokat csak a szükséges ideig őrizzük meg:  \n- Felhasználói fiókhoz kapcsolódó adatokat a szerződéses jogviszony fennállásáig és a vonatkozó elévülési idők végéig.  \n- A feltöltött dokumentumokat és az azokból nyert elemzéseket a felhasználói beállítások és megőrzési szabályzatunk szerint.  \n- Számlázási adatokat a számviteli és adójogszabályok által előírt ideig.\n\n## Adatbiztonság\n\nMegfelelő technikai és szervezési intézkedéseket alkalmazunk az adatok védelme érdekében, beleértve az átviteli és tárolási titkosítást, a hozzáférés-szabályozást, a naplózást és a rendszeres biztonsági ellenőrzéseket. Az adatok az Amazon Web Services EMEA SARL frankfurti adatközpontjaiban található szervereken kerülnek tárolásra.\n\n## Adatmegosztás\n\nSzemélyes adatokat harmadik féllel nem osztunk meg, kivéve ha:  \n- jogszabály ezt előírja vagy hatósági megkeresés alapján kötelesek vagyunk átadni,  \n- szolgáltató partnereink (például tárhelyszolgáltató) a szolgáltatás nyújtásához elengedhetetlenül szükséges mértékben kezelik az adatokat, velük adatfeldolgozói szerződést kötünk,  \n- Ön kifejezett hozzájárulását adta a megosztáshoz.\n\n## Nemzetközi adattovábbítás\n\nAz adatok elsődlegesen az EGT területén kerülnek feldolgozásra. Ha az adatok EGT-n kívüli továbbítása szükségessé válik, azt csak a GDPR szerinti garanciák mellett végezzük, beleértve a megfelelő védelmi szinttel rendelkező országba történő továbbítást vagy az Európai Bizottság által jóváhagyott szerződéses feltételek alkalmazását.\n\n## Az Ön jogai\n\nÖn a GDPR alapján az alábbi jogokkal rendelkezik:  \n- Hozzáférés a kezelt adatokhoz.  \n- A pontatlan adatok helyesbítése.  \n- Adatai törlésének kérése („elfeledtetéshez való jog”), ha annak jogalapja fennáll.  \n- Az adatkezelés korlátozásának kérése.  \n- Tiltakozás az adatkezelés ellen, ha az jogos érdeken alapul.  \n- Adathordozhatóság, amennyiben az adatkezelés hozzájáruláson vagy szerződésen alapul és automatizált módon történik.  \n- Bármikor visszavonhatja hozzájárulását, ha az adatkezelés ezen alapul.\n\n## Jogok gyakorlása\n\nJogai gyakorlásához kérjük, lépjen kapcsolatba velünk az admin@contraai.hu címen. Panasz esetén Ön jogosult a Nemzeti Adatvédelmi és Információszabadság Hatósághoz (NAIH) vagy lakóhelye szerinti felügyeleti hatósághoz fordulni.\n\n## Automatizált döntéshozatal\n\nA szolgáltatás mesterséges intelligenciát alkalmaz a dokumentumok elemzéséhez, azonban nem hoz kizárólag automatizált döntéseket, amelyek joghatással járnak vagy Önt jelentős mértékben érintik.\n\n## A Tájékoztató módosítása\n\nFenntartjuk a jogot a jelen Adatvédelmi Tájékoztató módosítására. A változásokat weboldalunkon tesszük közzé, és jelentős módosítás esetén a regisztrált felhasználókat értesítjük. A szolgáltatás további használata a módosítások elfogadását jelenti.\n\n## Kapcsolat\n\nHa kérdése vagy kérése van a személyes adatai kezelésével kapcsolatban, kérjük, vegye fel velünk a kapcsolatot az admin@contraai.hu e-mail-címen.\n\n---\n\nJelen Adatvédelmi Tájékoztató az Európai Gazdasági Térség területén alkalmazandó."
+    }
+  }
+}

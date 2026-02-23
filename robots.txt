@@ -1,0 +1,19 @@
+# Prevent all crawlers and AI training bots from accessing site content
+User-agent: *
+Disallow: /
+
+# Explicitly disallow known AI-focused crawlers
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: OAI-SearchBot
+Disallow: /

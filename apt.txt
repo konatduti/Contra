@@ -1,0 +1,6 @@
+# Packages required for Tesseract OCR and Poppler
+tesseract-ocr-hun
+tesseract-ocr
+libtesseract-dev
+libleptonica-dev
+poppler-utils
