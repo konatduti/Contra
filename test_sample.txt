@@ -1,0 +1,36 @@
+EMPLOYMENT AGREEMENT
+
+This Employment Agreement ("Agreement") is entered into between:
+
+EMPLOYER: TechCorp Solutions Ltd.
+Address: 1234 Business Street, Budapest, Hungary
+Registration Number: 01-234567
+
+EMPLOYEE: Jane Smith
+Address: 5678 Residential Ave, Budapest, Hungary
+ID Number: AB123456
+
+TERMS:
+- Position: Senior Software Developer
+- Start Date: March 1, 2024
+- Salary: 850,000 HUF per month gross
+- Working Hours: 40 hours per week
+- Probation Period: 3 months
+- Notice Period: 30 days
+
+BENEFITS:
+- Health insurance coverage
+- 25 days annual leave
+- Professional development budget
+
+CONFIDENTIALITY:
+Employee agrees to maintain confidentiality of all company information and trade secrets during and after employment.
+
+GOVERNING LAW:
+This agreement is governed by Hungarian labor law (2012. évi I. törvény - Munka Törvénykönyve).
+
+Date: March 1, 2024
+
+_________________          _________________
+TechCorp Solutions Ltd.    Jane Smith
+(Employer)                 (Employee)

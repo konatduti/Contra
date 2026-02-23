@@ -1,0 +1,34 @@
+EMPLOYMENT AGREEMENT
+
+This Employment Agreement ("Agreement") is made effective as of January 1, 2025, between TechCorp Ltd., a company incorporated under the laws of Hungary ("Company"), and John Smith, an individual ("Employee").
+
+1. POSITION AND DUTIES
+Employee shall serve as Senior Software Developer and shall perform such duties as may be assigned by the Company's management team.
+
+2. COMPENSATION
+The Company shall pay Employee an annual salary of 8,000,000 HUF, payable in monthly installments of 666,667 HUF.
+
+3. WORKING HOURS
+Employee's regular working hours shall be 40 hours per week, Monday through Friday.
+
+4. PROBATIONARY PERIOD
+The first 6 months of employment shall constitute a probationary period during which either party may terminate this Agreement with 30 days' written notice.
+
+5. CONFIDENTIALITY
+Employee agrees to maintain the confidentiality of all proprietary information of the Company.
+
+6. TERMINATION
+Either party may terminate this Agreement with 30 days' written notice. Upon termination, Employee shall return all Company property.
+
+7. GOVERNING LAW
+This Agreement shall be governed by the laws of Hungary.
+
+IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first written above.
+
+COMPANY:                           EMPLOYEE:
+TechCorp Ltd.                      John Smith
+
+_________________                  _________________
+Authorized Signature              Signature
+
+Date: January 1, 2025            Date: January 1, 2025
