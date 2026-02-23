@@ -146,6 +146,24 @@ def _persist_language_cookie(response):
     return response
 
 
+
+
+@app.route("/health", methods=["GET"])
+def health_check():
+    return {"ok": True}
+
+
+@app.after_request
+def _apply_optional_cors(response):
+    frontend_origin = (os.environ.get("FRONTEND_ORIGIN") or "").strip()
+    if frontend_origin and request.path.startswith("/api/"):
+        response.headers["Access-Control-Allow-Origin"] = frontend_origin
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        response.headers["Access-Control-Allow-Methods"] = "GET,POST,PUT,PATCH,DELETE,OPTIONS"
+        response.headers.setdefault("Vary", "Origin")
+    return response
+
 @app.context_processor
 def inject_locale_helpers():
     language = getattr(g, "current_language", "en")
@@ -319,3 +337,6 @@ with app.app_context():
 
 # Import routes
 from routes import *
+from api_v1 import api_v1
+
+app.register_blueprint(api_v1)
