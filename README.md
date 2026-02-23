@@ -131,3 +131,50 @@ Artur Bitemo & Donat Kuti
 
 
 
+
+## Frontend Integration (contrafrontend)
+
+This backend now exposes compatibility endpoints under `/api/v1/*` so the public `konatduti/contrafrontend` BFF can proxy requests without code changes.
+
+### Configure contrafrontend
+
+Set the frontend environment variable:
+
+```bash
+BACKEND_URL=https://<contra-backend-domain>
+```
+
+The frontend BFF route `/api/bff/*` should now proxy to:
+
+- `GET /api/v1/me`
+- `GET /api/v1/dashboard`
+- `GET /api/v1/documents`
+- `GET /api/v1/documents/<id>`
+- `POST /api/v1/documents/upload`
+- `GET /api/v1/analysis/<id>/status`
+
+Additional admin/company compatibility endpoints are also available:
+
+- `GET /api/v1/admin/requests`
+- `GET /api/v1/admin/companies`
+- `GET /api/v1/companies/<id>/members`
+
+### Quick verification
+
+```bash
+curl -i https://<contra-backend-domain>/api/v1/me
+curl -i https://<contra-backend-domain>/api/v1/dashboard
+curl -i https://<contra-backend-domain>/health
+```
+
+If calling via the frontend BFF, verify:
+
+```bash
+curl -i https://<contrafrontend-domain>/api/bff/me
+```
+
+For local smoke tests, use:
+
+```bash
+./scripts/smoke_test.sh http://localhost:5000
+```
