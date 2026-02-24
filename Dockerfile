@@ -1,30 +1,54 @@
-# ---------- BUILD STAGE ----------
-FROM python:3.12-slim AS builder
+# syntax=docker/dockerfile:1.7
+
+FROM python:3.12.11-slim-bookworm AS builder
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1 \
+    VENV_PATH=/opt/venv
 
-RUN apt-get update && apt-get install -y \
-    build-essential gcc g++ make cmake pkg-config \
-    tesseract-ocr libtesseract-dev libleptonica-dev poppler-utils \
-    libjpeg-dev zlib1g-dev libpng-dev libtiff-dev libfreetype6-dev \
-    libopenblas-dev libgomp1 \
+WORKDIR /build
+
+# Build-only dependencies (kept out of final image)
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+    build-essential \
+    cmake \
+    gcc \
+    g++ \
+    make \
+    pkg-config \
+    libtesseract-dev \
+    libleptonica-dev \
+    libjpeg62-turbo-dev \
+    zlib1g-dev \
+    libpng-dev \
+    libtiff-dev \
+    libfreetype-dev \
+    libopenblas-dev \
  && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /install
-COPY constraints.txt requirements.txt ./
+COPY requirements.txt constraints.txt ./
 
-RUN pip install --upgrade pip setuptools wheel \
- && pip install --prefix=/install --no-cache-dir -r requirements.txt -c constraints.txt
+RUN python -m venv "$VENV_PATH" \
+ && "$VENV_PATH/bin/pip" install --upgrade pip setuptools wheel \
+ && "$VENV_PATH/bin/pip" install -r requirements.txt -c constraints.txt
 
-# ---------- RUNTIME STAGE ----------
-FROM python:3.12-slim
+
+FROM python:3.12.11-slim-bookworm AS runtime
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    VENV_PATH=/opt/venv \
+    PATH="/opt/venv/bin:$PATH"
 
-# install ONLY runtime libs (no compilers, no dev headers)
-RUN apt-get update && apt-get install -y \
+WORKDIR /app
+
+# Runtime-only libraries
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
     tesseract-ocr \
     poppler-utils \
     libjpeg62-turbo \
@@ -36,10 +60,22 @@ RUN apt-get update && apt-get install -y \
     libgomp1 \
  && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
+RUN groupadd --system app && useradd --system --gid app --create-home app
 
-COPY --from=builder /install /usr/local
+COPY --from=builder /opt/venv /opt/venv
 
-COPY . .
+# Copy only runtime application files (no frontend/dev assets/tests)
+COPY *.py ./
+COPY templates ./templates
+COPY migrations ./migrations
+COPY favicon robots.txt ./
 
+RUN find /opt/venv -type d -name '__pycache__' -prune -exec rm -rf {} + \
+ && find /app -type d -name '__pycache__' -prune -exec rm -rf {} + \
+ && find /opt/venv -type f -name '*.pyc' -delete \
+ && chown -R app:app /app /opt/venv
+
+USER app
+
+EXPOSE 5000
 CMD ["python", "main.py"]

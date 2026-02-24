@@ -1,48 +1,59 @@
-# git / misc
+# VCS
 .git
 .gitignore
-*.log
-.DS_Store
 
-# node
-node_modules
-.next
-out
-dist
-build
-coverage
+# Frontend is not part of backend runtime image
+frontend/
+newfront/
 
-# python
-__pycache__
-*.pyc
+# Node / JS artifacts
+**/node_modules/
+**/.next/
+**/dist/
+**/build/
+**/coverage/
+
+# Python artifacts
+__pycache__/
+*.py[cod]
 *.pyo
 *.pyd
-.venv
-venv
-env
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
 
-# caches
-.cache
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-pip-wheel-metadata
+# Local tooling + editor files
+.vscode/
+.idea/
+.DS_Store
 
-# data / artifacts
-uploads
-data
-datasets
-models
-checkpoints
-*.zip
+# Test/development-only content
+tests/
+*.md
+replit.md
+scripts/
+
+# Data/artifacts not needed at runtime
+uploads/
+data/
+datasets/
+models/
+checkpoints/
+*.log
+*.sqlite
+*.db
 *.tar
 *.tar.gz
+*.zip
 *.7z
-*.mp4
-*.mov
-*.pdf
 
-# dotenv
+# Environment files
 .env
 .env.*
+
+# Docker artifacts
+Dockerfile*
+docker-compose*.yml
