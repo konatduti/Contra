@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DocumentRisk, DocumentStatus } from "@/lib/mock-data";
+import { DocumentRisk, DocumentStatus } from "@/lib/dashboard-types";
 
 const chipOptions = ["All", "Completed", "Failed", "High Risk"] as const;
 

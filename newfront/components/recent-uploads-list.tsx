@@ -2,7 +2,7 @@
 
 import { Settings } from "lucide-react";
 
-import { DocumentItem } from "@/lib/mock-data";
+import { DocumentItem } from "@/lib/dashboard-types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -21,16 +21,10 @@ const statusVariant = {
   Processing: "muted"
 } as const;
 
-export function RecentUploadsList({
-  documents,
-  interactive = true
-}: {
-  documents: DocumentItem[];
-  interactive?: boolean;
-}) {
+export function RecentUploadsList({ documents, interactive = true }: { documents: DocumentItem[]; interactive?: boolean }) {
   return (
     <>
-      <div className="hidden lg:block">
+      <div className="hidden overflow-x-auto lg:block">
         <Table>
           <TableHeader>
             <TableRow>
@@ -44,42 +38,11 @@ export function RecentUploadsList({
           <TableBody>
             {documents.map((doc) => (
               <TableRow key={doc.id}>
-                <TableCell>
-                  <div className="flex items-center gap-3">
-                    <div className="rounded-xl bg-slate-100 px-3 py-2 text-sm font-medium text-slate-700">
-                      {doc.name.split(".").pop()?.toUpperCase()}
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-slate-900">{doc.name}</p>
-                      <p className="text-xs text-muted-foreground">{doc.size}</p>
-                    </div>
-                  </div>
-                </TableCell>
+                <TableCell><p className="text-sm font-medium text-slate-900">{doc.name}</p><p className="text-xs text-muted-foreground">{doc.size}</p></TableCell>
                 <TableCell>{doc.uploadedAt}</TableCell>
-                <TableCell>
-                  <div className="flex flex-col gap-1">
-                    <Badge variant={riskVariant[doc.risk]}>{doc.risk}</Badge>
-                    {doc.status === "Processing" ? (
-                      <Badge variant={statusVariant[doc.status]}>{doc.status}</Badge>
-                    ) : null}
-                  </div>
-                </TableCell>
+                <TableCell><Badge variant={riskVariant[doc.risk]}>{doc.risk}</Badge></TableCell>
                 <TableCell>{doc.confidence ? `${doc.confidence}%` : "—"}</TableCell>
-                {interactive ? (
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" aria-label="Settings">
-                          <Settings className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem>Open analysis</DropdownMenuItem>
-                        <DropdownMenuItem>Download report</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                ) : null}
+                {interactive ? <TableCell className="text-right"><DropdownMenu><DropdownMenuTrigger asChild><Button variant="ghost" size="icon" aria-label="Settings"><Settings className="h-4 w-4" /></Button></DropdownMenuTrigger><DropdownMenuContent align="end"><DropdownMenuItem>Open analysis</DropdownMenuItem></DropdownMenuContent></DropdownMenu></TableCell> : null}
               </TableRow>
             ))}
           </TableBody>
@@ -88,22 +51,9 @@ export function RecentUploadsList({
       <div className="space-y-3 lg:hidden">
         {documents.map((doc) => (
           <div key={doc.id} className="flex flex-col gap-3 rounded-xl border bg-white p-4">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-900">{doc.name}</p>
-                <p className="text-xs text-muted-foreground">{doc.size}</p>
-              </div>
-              <Badge variant={riskVariant[doc.risk]}>{doc.risk}</Badge>
-            </div>
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <span>{doc.uploadedAt}</span>
-              <span>{doc.confidence ? `${doc.confidence}% confidence` : "Processing"}</span>
-            </div>
-            {doc.status === "Processing" ? (
-              <Badge variant={statusVariant[doc.status]} className={cn("w-fit")}>
-                {doc.status}
-              </Badge>
-            ) : null}
+            <div className="flex items-start justify-between"><p className="text-sm font-medium text-slate-900">{doc.name}</p><Badge variant={riskVariant[doc.risk]}>{doc.risk}</Badge></div>
+            <div className="flex items-center justify-between text-xs text-muted-foreground"><span>{doc.uploadedAt}</span><span>{doc.confidence ? `${doc.confidence}% confidence` : "—"}</span></div>
+            {doc.status !== "Completed" ? <Badge variant={statusVariant[doc.status]} className={cn("w-fit")}>{doc.status}</Badge> : null}
           </div>
         ))}
       </div>

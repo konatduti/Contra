@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { ChevronRight } from "lucide-react";
 
-import { DocumentItem } from "@/lib/mock-data";
+import { DocumentItem } from "@/lib/dashboard-types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { FiltersBar, FilterState } from "@/components/recent-uploads-filters";
@@ -100,7 +100,7 @@ export function RecentUploadsTable({
       <CardContent className={mode === "summary" ? "pt-0" : undefined}>
         {filteredDocs.length === 0 ? (
           <div className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
-            No documents match these filters.
+            No documents found.
           </div>
         ) : (
           <RecentUploadsList documents={mode === "summary" ? summaryDocs : filteredDocs} interactive={mode === "full"} />
