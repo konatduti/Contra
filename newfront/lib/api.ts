@@ -1,4 +1,3 @@
-import { headers } from "next/headers";
 import { DashboardData, DocumentItem, DocumentRisk, DocumentStatus, FlaggedIssue } from "@/lib/dashboard-types";
 
 type ApiResult<T> = {
@@ -64,16 +63,8 @@ const mapDocument = (doc: Record<string, unknown>): DocumentItem => {
   };
 };
 
-const getBaseUrl = async () => {
-  const h = await headers();
-  const host = h.get("host");
-  const proto = h.get("x-forwarded-proto") ?? "http";
-  return `${proto}://${host}`;
-};
-
 async function requestBff<T>(path: string): Promise<ApiResult<T>> {
-  const baseUrl = await getBaseUrl();
-  const response = await fetch(`${baseUrl}/api/bff/${path}`, { cache: "no-store" });
+  const response = await fetch(`/api/bff/${path}`, { cache: "no-store" });
   if (!response.ok) {
     return {
       ok: false,

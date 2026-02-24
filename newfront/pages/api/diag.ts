@@ -1,11 +1,9 @@
-import { NextResponse } from "next/server";
+import type { NextApiRequest, NextApiResponse } from "next";
 
-export const dynamic = "force-dynamic";
-
-export async function GET() {
+export default function handler(_req: NextApiRequest, res: NextApiResponse) {
   const backendUrl = process.env.BACKEND_URL ?? null;
 
-  return NextResponse.json({
+  res.status(200).json({
     ok: true,
     backendUrlConfigured: Boolean(backendUrl),
     backendUrl,

@@ -1,45 +1,63 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const backendBase = process.env.BACKEND_URL?.replace(/\/$/, "");
+function getBackendBase() {
+  return process.env.BACKEND_URL?.replace(/\/$/, "") ?? "";
+}
+
+function buildForwardHeaders(request: NextRequest): Headers {
+  const headers = new Headers();
+  request.headers.forEach((value, key) => {
+    if (key.toLowerCase() === "host") return;
+    headers.set(key, value);
+  });
+
+  const cookie = request.headers.get("cookie");
+  if (cookie) headers.set("cookie", cookie);
+
+  return headers;
+}
 
 async function proxyRequest(request: NextRequest, context: { params: { path: string[] } }) {
+  const backendBase = getBackendBase();
+  const incomingPath = context.params.path.join("/");
+
   if (!backendBase) {
+    console.error("[BFF] Missing BACKEND_URL", { incomingPath, backendUrl: null, statusCode: 500 });
     return NextResponse.json({ error: "BACKEND_URL is not configured" }, { status: 500 });
   }
 
-  const path = context.params.path.join("/");
-  const url = new URL(`${backendBase}/api/v1/${path}`);
+  const targetUrl = new URL(`${backendBase}/api/v1/${incomingPath}`);
   request.nextUrl.searchParams.forEach((value, key) => {
-    url.searchParams.append(key, value);
+    targetUrl.searchParams.append(key, value);
   });
 
-  const response = await fetch(url.toString(), {
+  const backendResponse = await fetch(targetUrl.toString(), {
     method: request.method,
-    headers: {
-      cookie: request.headers.get("cookie") ?? "",
-      "content-type": request.headers.get("content-type") ?? "application/json"
-    },
-    body: request.method === "GET" || request.method === "HEAD" ? undefined : await request.text(),
-    redirect: "manual",
-    cache: "no-store"
+    headers: buildForwardHeaders(request),
+    body: request.method === "GET" || request.method === "HEAD" ? undefined : request.body,
+    redirect: "manual"
   });
 
-  if (!response.ok) {
+  if (!backendResponse.ok) {
     console.error("[BFF] Backend request failed", {
-      status: response.status,
-      backendUrl: url.toString(),
-      method: request.method
+      incomingPath,
+      backendUrl: targetUrl.toString(),
+      statusCode: backendResponse.status
     });
   }
 
-  const data = await response.text();
-  return new NextResponse(data, {
-    status: response.status,
-    headers: {
-      "content-type": response.headers.get("content-type") ?? "application/json"
-    }
+  const responseHeaders = new Headers();
+  backendResponse.headers.forEach((value, key) => {
+    responseHeaders.append(key, value);
+  });
+
+  return new NextResponse(backendResponse.body, {
+    status: backendResponse.status,
+    headers: responseHeaders
   });
 }
+
+export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest, context: { params: { path: string[] } }) {
   return proxyRequest(request, context);
@@ -58,5 +76,9 @@ export async function PATCH(request: NextRequest, context: { params: { path: str
 }
 
 export async function DELETE(request: NextRequest, context: { params: { path: string[] } }) {
+  return proxyRequest(request, context);
+}
+
+export async function OPTIONS(request: NextRequest, context: { params: { path: string[] } }) {
   return proxyRequest(request, context);
 }
